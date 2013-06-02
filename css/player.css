@@ -1,0 +1,154 @@
+.b-player {
+    width: 400px;
+    background: #f6f6f6;
+    }
+
+    /** information */
+    .b-player-info {
+
+        }
+        .b-player-info-song {
+
+            }
+            .b-player-info-song-title {
+                font-weight: bold;
+                font-size: 16px;
+                }
+            .b-player-info-song-artist {
+                font-size: 12px;
+                }
+
+    /** controls */
+    .b-player-controls {
+
+        }
+        .b-player-controls-playback {
+            margin: 15px 0;
+            }
+            .b-player-controls-playback.prev {
+
+                }
+
+            /** pause button */
+            .b-player-controls-playback-btn-pause {
+
+                }
+                .b-player-controls-playback-btn-pause .b-paused {
+                    display: none;
+                    }
+                .b-player-controls-playback-btn-pause .b-playing {
+                    display: inline-block;
+                    }
+                .b-player-controls-playback-btn-pause.paused .b-playing {
+                    display: none;
+                    }
+                .b-player-controls-playback-btn-pause.paused .b-paused {
+                    display: inline-block;
+                    }
+
+            .b-player-controls-playback.next {
+
+                }
+            .b-player-controls-playback-timer {
+                overflow: hidden;
+                width: 100px;
+                margin: 10px auto;
+                }
+                .b-player-controls-playback-timer-current {
+                    float: left;
+                    }
+                .b-player-controls-playback-timer-progress {
+
+                    }
+                .b-player-controls-playback-timer-total {
+                    float: right;
+                    }
+
+    /** search dialog */
+    .b-player-search {
+        display: none;
+        }
+        .b-player-search-dialog {
+            display: block;
+            padding: 4px 10px;
+            width: 100%;
+            }
+
+    /** playlist */
+    .b-player-playlist {
+        height: 600px;
+        overflow: auto;
+        }
+        .b-player-playlist-item {
+            font-size: 14px;
+            padding: 2px 0;
+            overflow: hidden;
+            cursor: default;
+            background-color: #f6f6f6;
+            color: black;
+
+            -moz-user-select': none;
+            -o-user-select: none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            }
+        .b-player-playlist-item:nth-child(odd) {
+            background-color: white;
+        }
+        .b-player-playlist-item.selected {
+            background-color: #99f0fa;
+            }
+        .b-player-playlist-item.playing {
+            color: white;
+            background-color: #888;
+            }
+        .b-player-playlist-item.queued {
+
+            }
+            .b-player-playlist-item-inner {
+                float: left;
+                }
+
+                .b-player-playlist-item-inner.b-state {
+                    width: 5%;
+                    text-align: center;
+                    }
+                    .b-player-playlist-item-inner.b-state span {
+                        display: block;
+                        margin: 0 auto;
+                        margin-left: 2px;
+                        line-height: 16px;
+                        visibility: hidden;
+                        width: 16px; height: 16px;
+                    }
+                    .b-player-playlist-item.queued .b-state span {
+                        background: #e42889;
+                        color: white;
+                        visibility: visible;
+                    }
+                    .b-player-playlist-item.playing .b-state span {
+                        visibility: hidden;
+                        background: none;
+                    }
+                    .b-player-playlist-item.playing .b-state {
+                        background: url('../img/playing.png') center center no-repeat;
+                    }
+                    .b-player-playlist-item-inner.b-state span {
+                    }
+                .b-player-playlist-item-inner.b-position {
+                    width: 10%;
+                    text-align: center;
+                    }
+                .b-player-playlist-item-inner.b-song {
+                    width: 75%;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    }
+                .b-player-playlist-item-inner.b-duration {
+                    width: 10%;
+                    text-align: center;
+                    }
+

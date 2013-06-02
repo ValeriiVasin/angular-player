@@ -1,0 +1,72 @@
+<audio id='player'></audio>
+<div class="b-player">
+  <div class="b-player-info">
+    <div class="b-player-info-song">
+      <div
+        class="b-player-info-song-title"
+        ng-bind-html-unsafe="currentSong().title"></div>
+      <div
+        class="b-player-info-song-artist"
+        ng-bind-html-unsafe="currentSong().artist"></div>
+    </div>
+  </div>
+
+  <div class="b-player-controls">
+    <div class="b-player-controls-playback">
+      <button class="b-player-controls-playback-btn prev" ng-click='controls.prev()'>&lt; prev</button>
+
+      <span
+        ng-class="{
+          'b-player-controls-playback-btn-pause': true,
+          'paused': isPaused
+        }"
+        ng-click='controls.toggle()'
+      >
+        <button class="b-player-controls-playback-btn b-playing">pause</button>
+        <button class="b-player-controls-playback-btn b-paused">play</button>
+      </span>
+
+      <button class="b-player-controls-playback-btn next" ng-click='controls.next()'>next &gt;</button>
+
+      <div class="b-player-controls-playback-timer">
+        <div class="b-player-controls-playback-timer-current">{{time | duration}}</div>
+        <div class="b-player-controls-playback-timer-progress b-slider"></div>
+        <div class="b-player-controls-playback-timer-total">{{currentSong().duration | duration}}</div>
+      </div>
+    </div>
+
+    <div class="b-player-controls-volume">
+      <div class="b-player-controls-volume-mute"></div>
+      <div class="b-player-controls-volume-progress b-slider"></div>
+    </div>
+  </div>
+
+  <div class="b-player-search">
+    <input type="search" name="search" class='b-player-search-dialog' autocomplete='off'>
+  </div>
+
+  <ul class="b-player-playlist">
+    <li
+      id='aid_{{song.aid}}'
+      ng-class='{
+          "playing": isCurrentSong($index),
+          "b-player-playlist-item": true,
+          "selected": isSelected($index),
+          "queued": positionInsideQueue($index)
+      }'
+      ng-dblclick='playSong($index)'
+      ng-click='setSelected($index)'
+      ng-repeat='song in songs'>
+      <div class="b-player-playlist-item-inner b-state">
+        <span>{{positionInsideQueue($index)}}</span>
+      </div>
+      <div class="b-player-playlist-item-inner b-position">{{$index + 1}}</div>
+      <div
+        class="b-player-playlist-item-inner b-song"
+        ng-bind-html-unsafe="song.artist + ' - ' + song.title"></div>
+      <div class="b-player-playlist-item-inner b-duration">
+        {{song.duration | duration}}
+      </div>
+    </li>
+  </ul>
+</div>
