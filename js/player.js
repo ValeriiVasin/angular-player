@@ -321,6 +321,44 @@
 
                         scope.playSong(index, true);
                     };
+
+                    // keyboard shortcuts
+                    angular.element(document)
+                        .bind('keydown', function (e) {
+                            scope.$apply(function () {
+                                switch (e.which) {
+                                    case 81:
+                                        // Q - queue
+                                        scope.toggleSelectedInQueue();
+                                        e.preventDefault();
+                                        break;
+                                    case 32:
+                                        // Space - pause/unpause current song
+                                        e.preventDefault();
+                                        break;
+                                    case 40:
+                                        // Down - select next item in the list
+                                        scope.selectNext();
+                                        e.preventDefault();
+                                        break;
+                                    case 38:
+                                        // Up - select prev item in the list
+                                        scope.selectPrev();
+                                        e.preventDefault();
+                                        break;
+                                    case 13:
+                                        // Enter - play currently selected item
+                                        scope.playSelected();
+                                        e.preventDefault();
+                                        break;
+                                    case 84:
+                                        // T - search box
+                                        break;
+
+                                        // no defaults
+                                }
+                            });
+                        });
                 }
             };
         }
