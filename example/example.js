@@ -7,7 +7,7 @@
         $scope.songs = [];
 
         $http
-            .get('mp3/data.json')
+            .get('data.json')
             .success(function (songs) {
                 $scope.songs = songs;
             });
