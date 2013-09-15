@@ -18,24 +18,34 @@
       <div class="b-player__controls__navigation__play__pause"></div>
     </div>
 
-    <span class="b-player__controls__navigation__next">
+    <div class="b-player__controls__navigation__next">
       <div class="b-player__controls__navigation__next-btn"></div>
-    </span>
+    </div>
   </div>
 
+  <div class="clear"></div>
   <div class="b-player__controls__splitter"></div>
 
   <div class="b-player__controls__playback">
-    <div class="b-player__controls__playback__progress"></div>
+    <div
+      slider="time"
+      slider-update="update(progress)"
+      slider-max="duration"
+      class="b-player__controls__playback__progress"
+      ></div>
 
-    <div class="b-player__controls__playback__time b-player__controls__playback__time--left">
+    <div
+      ng-class="{'b-player__controls__playback__time--left': showTimeLeft}"
+      class="b-player__controls__playback__time">
       <div
         ng-bind="time | duration"
-        class="b-player__controls__playback__time-elapsed"
+        ng-click="showTimeLeft = true"
+        class="b-player__controls__playback__time__elapsed"
         ></div>
       <div
         ng-bind="(time - currentSong().duration) | duration"
-        class="b-player__controls__playback__time-left"
+        ng-click="showTimeLeft = false"
+        class="b-player__controls__playback__time__left"
         ></div>
     </div>
   </div>
@@ -45,6 +55,7 @@
     <div class="b-player__controls__volume__progress"></div>
     <div class="b-player__controls__volume__unmute"></div>
   </div>
+  <div class="clear"></div>
 
   <div class="b-player-controls">
     <div class="b-player-controls-playback">
@@ -80,6 +91,7 @@
     <input type="search" name="search" class='b-player-search-dialog' autocomplete='off'>
   </div>
 
+  <div class="clear"></div>
   <ul class="b-player-playlist">
     <li
       id='aid_{{song.aid}}'

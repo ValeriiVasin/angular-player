@@ -169,6 +169,50 @@
     //
     // Directives
     //
+
+    //
+    // <span slider="mymodel" sliderUpdate="fn(progress)" />
+    //
+    app.directive('slider', function () {
+        return {
+            scope: {
+                slider: '=',
+                update: '&sliderUpdate',
+                max: '=sliderMax'
+            },
+            link: function (scope, element) {
+                // prevent applying time changes while user sliding
+                var preventChanges = false;
+
+                element.slider({
+                    range: 'min',
+                    start: function () {
+                        preventChanges = true;
+                    },
+                    stop: function (event, ui) {
+                        preventChanges = false;
+                        scope.update({ progress: ui.value });
+                    }
+                });
+
+                scope.$watch('slider', function (value) {
+                    if (preventChanges) {
+                        return;
+                    }
+                    element.slider('option', 'value', value);
+                });
+
+                scope.$watch('max', function (current, prev) {
+                    if (current === prev) {
+                        return;
+                    }
+
+                    element.slider('option', 'max', current);
+                });
+            }
+        };
+    });
+
     app.directive('ngPlayer', [
         '$timeout', 'Library', 'Queue',
         function ($timeout, Library, Queue) {
@@ -183,12 +227,33 @@
                 link: function (scope) {
                     var player = document.getElementById('player');
 
+                    // time show mode
+                    scope.showTimeLeft = false;
+
                     scope.$watch('songs', function (newSongs) {
                         Library.reset(newSongs);
                     });
 
+                    scope.$watch(function () {
+                        return Library.currentSong();
+                    }, function (current, prev) {
+                        if (prev === current) {
+                            return;
+                        }
+
+                        // save current song params
+                        scope.duration = current.duration;
+                    });
+
+                    scope.update = function (time) {
+                        player.currentTime = time;
+                    };
+
                     // currently playing song time
                     scope.time = 0;
+
+                    // currently playing song progress
+                    scope.progress = 0;
 
                     // pause state
                     scope.isPaused = true;
@@ -233,8 +298,8 @@
 
                     /**
                      * Queue position to display
-                     * @param    {Number} index     Song index
-                     * @return {Number|String}    Position in queue or empty string
+                     * @param  {Number}         index Song index
+                     * @return {Number|String}        Position in queue or empty string
                      */
                     scope.positionInsideQueue = function (index) {
                         var position = Queue.position(index);

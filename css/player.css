@@ -1,3 +1,7 @@
+.clear {
+    clear: both;
+    }
+
 .b-player {
     width: 500px;
     background: #68757e;
@@ -111,12 +115,62 @@
                     }
 
     .b-player__controls__splitter {
-        float: none;
-        clear: both;
-        margin-top: 50px;
         height: 1px;
-        background: black;
+        background-color: #24292c;
+        margin: 10px 0;
+        overflow: hidden;
     }
+
+    .b-player__controls__playback {
+
+        }
+        .b-player__controls__playback__progress {
+            width: 225px;
+            height: 7px;
+            background-color: #384146;
+            border-radius: 4px;
+            position: relative;
+            cursor: pointer;
+            float: left;
+            }
+            .b-player__controls__playback__progress .ui-slider-handle {
+                position: absolute;
+                width: 17px;
+                height: 17px;
+                margin-top: -4px;
+                margin-left: -6px;
+                background: url('../img/slider_ellipse.png');
+                outline: none;
+                }
+            .b-player__controls__playback__progress .ui-slider-range {
+                position: absolute;
+                height: 100%;
+                width: 0;
+                background-color: white;
+                border-radius: 4px;
+                }
+
+        .b-player__controls__playback__time {
+                float: left;
+                color: white;
+                overflow: hidden;
+                margin-left: 7px;
+                margin-top: -3px;
+                font-size: 16px;
+                cursor: pointer;
+                width: 45px;
+                text-align: right;
+            }
+            .b-player__controls__playback__time__elapsed,
+            .b-player__controls__playback__time--left .b-player__controls__playback__time__left {
+                display: inline-block;
+                }
+            .b-player__controls__playback__time__left,
+            .b-player__controls__playback__time--left .b-player__controls__playback__time__elapsed {
+                    display: none;
+                }
+
+
 
     /** controls */
     .b-player-controls {
