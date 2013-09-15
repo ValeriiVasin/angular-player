@@ -1,14 +1,49 @@
 <audio id='player'></audio>
 <div class="b-player">
-  <div class="b-player-info">
-    <div class="b-player-info-song">
-      <div
-        class="b-player-info-song-title"
-        ng-bind-html-unsafe="currentSong().title"></div>
-      <div
-        class="b-player-info-song-artist"
-        ng-bind-html-unsafe="currentSong().artist"></div>
+  <div class="b-player__controls__info">
+    <div class="b-player__controls__info__artist" ng-bind-html-unsafe="currentSong().artist"></div>
+    <div class="b-player__controls__info__title" ng-bind-html-unsafe="currentSong().title"></div>
+  </div>
+
+  <div class="b-player__controls__navigation">
+    <div class="b-player__controls__navigation__prev">
+      <div class="b-player__controls__navigation__prev-btn"></div>
     </div>
+
+    <div
+      class="b-player__controls__navigation__play"
+      ng-class="{'b-player__controls__navigation__play--paused': isPaused}"
+      >
+      <div class="b-player__controls__navigation__play__play"></div>
+      <div class="b-player__controls__navigation__play__pause"></div>
+    </div>
+
+    <span class="b-player__controls__navigation__next">
+      <div class="b-player__controls__navigation__next-btn"></div>
+    </span>
+  </div>
+
+  <div class="b-player__controls__splitter"></div>
+
+  <div class="b-player__controls__playback">
+    <div class="b-player__controls__playback__progress"></div>
+
+    <div class="b-player__controls__playback__time b-player__controls__playback__time--left">
+      <div
+        ng-bind="time | duration"
+        class="b-player__controls__playback__time-elapsed"
+        ></div>
+      <div
+        ng-bind="(time - currentSong().duration) | duration"
+        class="b-player__controls__playback__time-left"
+        ></div>
+    </div>
+  </div>
+
+  <div class="b-player__controls__volume">
+    <div class="b-player__controls__volume__mute"></div>
+    <div class="b-player__controls__volume__progress"></div>
+    <div class="b-player__controls__volume__unmute"></div>
   </div>
 
   <div class="b-player-controls">

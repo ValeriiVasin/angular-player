@@ -1,22 +1,122 @@
 .b-player {
-    width: 400px;
-    background: #f6f6f6;
+    width: 500px;
+    background: #68757e;
+    padding: 10px;
+    font-family: "Open Sans",Arial,Helvetica,sans-serif;
+    font-size: 13px;
     }
 
     /** information */
-    .b-player-info {
-
+    .b-player__controls__info {
+        overflow: hidden;
+        float: left;
+        width: 310px;
+        height: 30px;
+        background-color: #475259;
+        border: 1px solid #7d8990;
+        border-radius: 6px;
+        color: white;
+        padding: 8px;
         }
-        .b-player-info-song {
-
+        .b-player__controls__info__artist {
+            font-weight: 800;
+            font-size: 16px;
             }
-            .b-player-info-song-title {
-                font-weight: bold;
-                font-size: 16px;
+        .b-player__controls__info__title {
+            margin-top: 3px;
+            }
+
+    .b-player__controls__navigation {
+        margin-left: 30px;
+        margin-top: 8px;
+        float: left;
+        overflow: hidden;
+        width: 120px;
+        height: 40px;
+        }
+        .b-player__controls__navigation__prev,
+        .b-player__controls__navigation__next {
+            width: 30px;
+            height: 30px;
+            background-color: #758189;
+            border-radius: 15px;
+            overflow: hidden;
+            float: left;
+            margin-top: 4px;
+            }
+        .b-player__controls__navigation__next {
+            margin-left: 8px;
+            }
+            .b-player__controls__navigation__prev-btn,
+            .b-player__controls__navigation__next-btn {
+                background-color: #e2e2e2;
+                width: 20px;
+                height: 20px;
+                border-radius: 10px;
+                margin: 5px 0 0 5px;
+                position: relative;
+                cursor: pointer;
                 }
-            .b-player-info-song-artist {
-                font-size: 12px;
+                .b-player__controls__navigation__prev-btn::before,
+                .b-player__controls__navigation__next-btn::before {
+                        display: inline-block;
+                        content: '';
+                        position: absolute;
+                        left: 3px;
+                        top: 5px;
+                        width: 12px;
+                        height: 10px;
+                        background: url('../img/prev_btn.png') left top no-repeat;
+                    }
+                .b-player__controls__navigation__next-btn::before {
+                    background: url('../img/next_btn.png') left top no-repeat;
+                    left: 5px;
+                    top: 5px;
+                    }
+
+        .b-player__controls__navigation__play {
+            width: 40px;
+            height: 40px;
+            background-color: #758189;
+            border-radius: 20px;
+            margin-left: 8px;
+            overflow: hidden;
+            float: left;
+            }
+            .b-player__controls__navigation__play__play,
+            .b-player__controls__navigation__play__pause {
+                background-color: #e2e2e2;
+                width: 28px;
+                height: 28px;
+                border-radius: 14px;
+                margin: 6px 0 0 6px;
+                position: relative;
+                cursor: pointer;
                 }
+                .b-player__controls__navigation__play__play::before,
+                .b-player__controls__navigation__play__pause::before {
+                    display: inline-block;
+                    content: '';
+                    width: 10px;
+                    height: 15px;
+                    top: 6px;
+                    left: 10px;
+                    position: relative;
+                    }
+                .b-player__controls__navigation__play__play::before {
+                    background: url('../img/play_btn.png') left top no-repeat;
+                    }
+                .b-player__controls__navigation__play__pause::before {
+                    background: url('../img/pause_btn.png') left top no-repeat;
+                    }
+
+    .b-player__controls__splitter {
+        float: none;
+        clear: both;
+        margin-top: 50px;
+        height: 1px;
+        background: black;
+    }
 
     /** controls */
     .b-player-controls {

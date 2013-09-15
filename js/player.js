@@ -152,20 +152,17 @@
     //
     app.filter('duration', ['Utils', function (Utils) {
         return function (duration) {
-            var result = [],
-                    resultStr,
-                    value;
-
-            while (duration) {
-                value = duration % 60;
-                duration = Math.floor(duration / 60);
-                result.unshift( Utils.pad(value) );
+            if (duration === 0) {
+                return '00:00';
             }
-            resultStr = result.join(':');
+            var result = duration < 0 ? '-' : '';
+            duration = Math.abs(duration);
+            var minutes = Utils.pad( Math.floor(duration / 60) );
+            var seconds = Utils.pad( duration % 60 );
 
-            return resultStr.length === 0 ? '00:00' :
-              resultStr.length < 5 ? '00:' + resultStr :
-              resultStr;
+            result = result + minutes + ':' + seconds;
+
+            return result;
         };
     }]);
 
