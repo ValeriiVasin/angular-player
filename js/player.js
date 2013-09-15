@@ -173,25 +173,41 @@
     //
     // <span slider="mymodel" sliderUpdate="fn(progress)" />
     //
-    app.directive('slider', function () {
+    app.directive('slider', ['$timeout', function ($timeout) {
         return {
             scope: {
                 slider: '=',
                 update: '&sliderUpdate',
                 max: '=sliderMax'
             },
-            link: function (scope, element) {
+            link: function (scope, element, attrs) {
                 // prevent applying time changes while user sliding
                 var preventChanges = false;
+
+                // update model on the fly, without passing value to update func
+                var directApply = (typeof attrs.sliderUpdate === 'undefined');
 
                 element.slider({
                     range: 'min',
                     start: function () {
                         preventChanges = true;
                     },
+                    slide: function (event, ui) {
+                        if (!directApply) {
+                            return;
+                        }
+                        $timeout(function () {
+                            scope.slider = ui.value;
+                        });
+                    },
                     stop: function (event, ui) {
-                        preventChanges = false;
-                        scope.update({ progress: ui.value });
+                        $timeout(function () {
+                            preventChanges = false;
+                            if (directApply) {
+                                return;
+                            }
+                            scope.update({ progress: ui.value });
+                        });
                     }
                 });
 
@@ -199,6 +215,7 @@
                     if (preventChanges) {
                         return;
                     }
+
                     element.slider('option', 'value', value);
                 });
 
@@ -211,7 +228,7 @@
                 });
             }
         };
-    });
+    }]);
 
     app.directive('ngPlayer', [
         '$timeout', 'Library', 'Queue',
@@ -225,7 +242,8 @@
                     songs: '='
                 },
                 link: function (scope) {
-                    var player = document.getElementById('player');
+                    var player = document.getElementById('player'),
+                        volume = localStorage.getItem('volume');
 
                     // time show mode
                     scope.showTimeLeft = false;
@@ -248,6 +266,12 @@
                     scope.update = function (time) {
                         player.currentTime = time;
                     };
+
+                    scope.volume = volume ? Number(volume) : 100;
+                    scope.$watch('volume', function (value) {
+                        player.volume = value === 0 ? value : (value / 100);
+                        localStorage.setItem('volume', value);
+                    });
 
                     // currently playing song time
                     scope.time = 0;

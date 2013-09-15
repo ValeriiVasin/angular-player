@@ -2,6 +2,30 @@
     clear: both;
     }
 
+.slider {
+    height: 7px;
+    background-color: #384146;
+    border-radius: 4px;
+    position: relative;
+    cursor: pointer;
+    }
+    .slider .ui-slider-handle {
+        position: absolute;
+        width: 17px;
+        height: 17px;
+        margin-top: -4px;
+        margin-left: -6px;
+        background: url('../img/slider_ellipse.png');
+        outline: none;
+        }
+    .slider .ui-slider-range {
+        position: absolute;
+        height: 100%;
+        width: 0;
+        background-color: white;
+        border-radius: 4px;
+        }
+
 .b-player {
     width: 500px;
     background: #68757e;
@@ -117,38 +141,16 @@
     .b-player__controls__splitter {
         height: 1px;
         background-color: #24292c;
-        margin: 10px 0;
+        margin: 15px 0;
         overflow: hidden;
-    }
+        }
 
     .b-player__controls__playback {
-
         }
         .b-player__controls__playback__progress {
             width: 225px;
-            height: 7px;
-            background-color: #384146;
-            border-radius: 4px;
-            position: relative;
-            cursor: pointer;
             float: left;
             }
-            .b-player__controls__playback__progress .ui-slider-handle {
-                position: absolute;
-                width: 17px;
-                height: 17px;
-                margin-top: -4px;
-                margin-left: -6px;
-                background: url('../img/slider_ellipse.png');
-                outline: none;
-                }
-            .b-player__controls__playback__progress .ui-slider-range {
-                position: absolute;
-                height: 100%;
-                width: 0;
-                background-color: white;
-                border-radius: 4px;
-                }
 
         .b-player__controls__playback__time {
                 float: left;
@@ -169,6 +171,32 @@
             .b-player__controls__playback__time--left .b-player__controls__playback__time__elapsed {
                     display: none;
                 }
+
+    .b-player__controls__volume {
+        width: 146px;
+        float: right;
+        height: 5px;
+        position: relative;
+        }
+        .b-player__controls__volume__low {
+            float: left;
+            width: 11px;
+            height: 10px;
+            margin-top: -1px;
+            background: url('../img/volume_low_btn.png');
+            }
+        .b-player__controls__volume__progress {
+            float: left;
+            width: 100px;
+            margin-left: 8px;
+            }
+        .b-player__controls__volume__high {
+            float: right;
+            width: 15px;
+            height: 15px;
+            margin-top: -3px;
+            background: url('../img/volume_high_btn.png');
+            }
 
 
 

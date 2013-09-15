@@ -31,7 +31,7 @@
       slider="time"
       slider-update="update(progress)"
       slider-max="duration"
-      class="b-player__controls__playback__progress"
+      class="slider b-player__controls__playback__progress"
       ></div>
 
     <div
@@ -51,9 +51,12 @@
   </div>
 
   <div class="b-player__controls__volume">
-    <div class="b-player__controls__volume__mute"></div>
-    <div class="b-player__controls__volume__progress"></div>
-    <div class="b-player__controls__volume__unmute"></div>
+    <div class="b-player__controls__volume__low"></div>
+    <div
+      slider="volume"
+      class="b-player__controls__volume__progress slider"
+      ></div>
+    <div class="b-player__controls__volume__high"></div>
   </div>
   <div class="clear"></div>
 
