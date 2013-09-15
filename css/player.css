@@ -136,6 +136,9 @@
                     }
                 .b-player__controls__navigation__play__pause::before {
                     background: url('../img/pause_btn.png') left top no-repeat;
+                    width: 16px;
+                    height: 16px;
+                    left: 6px;
                     }
 
     .b-player__controls__splitter {

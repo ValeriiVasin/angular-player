@@ -12,10 +12,9 @@
 
     <div
       class="b-player__controls__navigation__play"
-      ng-class="{'b-player__controls__navigation__play--paused': isPaused}"
       >
-      <div class="b-player__controls__navigation__play__play"></div>
-      <div class="b-player__controls__navigation__play__pause"></div>
+      <div class="b-player__controls__navigation__play__play" ng-show="isPaused"></div>
+      <div class="b-player__controls__navigation__play__pause" ng-hide="isPaused"></div>
     </div>
 
     <div class="b-player__controls__navigation__next">
