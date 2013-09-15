@@ -152,26 +152,84 @@
     //
     app.filter('duration', ['Utils', function (Utils) {
         return function (duration) {
-            var result = [],
-                    resultStr,
-                    value;
-
-            while (duration) {
-                value = duration % 60;
-                duration = Math.floor(duration / 60);
-                result.unshift( Utils.pad(value) );
+            if (duration === 0) {
+                return '00:00';
             }
-            resultStr = result.join(':');
+            var result = duration < 0 ? '-' : '';
+            duration = Math.abs(duration);
+            var minutes = Utils.pad( Math.floor(duration / 60) );
+            var seconds = Utils.pad( duration % 60 );
 
-            return resultStr.length === 0 ? '00:00' :
-              resultStr.length < 5 ? '00:' + resultStr :
-              resultStr;
+            result = result + minutes + ':' + seconds;
+
+            return result;
         };
     }]);
 
     //
     // Directives
     //
+
+    //
+    // <span slider="mymodel" sliderUpdate="fn(progress)" />
+    //
+    app.directive('slider', ['$timeout', function ($timeout) {
+        return {
+            scope: {
+                slider: '=',
+                update: '&sliderUpdate',
+                max: '=sliderMax'
+            },
+            link: function (scope, element, attrs) {
+                // prevent applying time changes while user sliding
+                var preventChanges = false;
+
+                // update model on the fly, without passing value to update func
+                var directApply = (typeof attrs.sliderUpdate === 'undefined');
+
+                element.slider({
+                    range: 'min',
+                    start: function () {
+                        preventChanges = true;
+                    },
+                    slide: function (event, ui) {
+                        if (!directApply) {
+                            return;
+                        }
+                        $timeout(function () {
+                            scope.slider = ui.value;
+                        });
+                    },
+                    stop: function (event, ui) {
+                        $timeout(function () {
+                            preventChanges = false;
+                            if (directApply) {
+                                return;
+                            }
+                            scope.update({ progress: ui.value });
+                        });
+                    }
+                });
+
+                scope.$watch('slider', function (value) {
+                    if (preventChanges) {
+                        return;
+                    }
+
+                    element.slider('option', 'value', value);
+                });
+
+                scope.$watch('max', function (current, prev) {
+                    if (current === prev) {
+                        return;
+                    }
+
+                    element.slider('option', 'max', current);
+                });
+            }
+        };
+    }]);
+
     app.directive('ngPlayer', [
         '$timeout', 'Library', 'Queue',
         function ($timeout, Library, Queue) {
@@ -184,14 +242,42 @@
                     songs: '='
                 },
                 link: function (scope) {
-                    var player = document.getElementById('player');
+                    var player = document.getElementById('player'),
+                        volume = localStorage.getItem('volume');
+
+                    // time show mode
+                    scope.showTimeLeft = false;
 
                     scope.$watch('songs', function (newSongs) {
                         Library.reset(newSongs);
                     });
 
+                    scope.$watch(function () {
+                        return Library.currentSong();
+                    }, function (current, prev) {
+                        if (prev === current) {
+                            return;
+                        }
+
+                        // save current song params
+                        scope.duration = current.duration;
+                    });
+
+                    scope.update = function (time) {
+                        player.currentTime = time;
+                    };
+
+                    scope.volume = volume ? Number(volume) : 100;
+                    scope.$watch('volume', function (value) {
+                        player.volume = value === 0 ? value : (value / 100);
+                        localStorage.setItem('volume', value);
+                    });
+
                     // currently playing song time
                     scope.time = 0;
+
+                    // currently playing song progress
+                    scope.progress = 0;
 
                     // pause state
                     scope.isPaused = true;
@@ -236,8 +322,8 @@
 
                     /**
                      * Queue position to display
-                     * @param    {Number} index     Song index
-                     * @return {Number|String}    Position in queue or empty string
+                     * @param  {Number}         index Song index
+                     * @return {Number|String}        Position in queue or empty string
                      */
                     scope.positionInsideQueue = function (index) {
                         var position = Queue.position(index);

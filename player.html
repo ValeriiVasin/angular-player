@@ -1,50 +1,77 @@
 <audio id='player'></audio>
 <div class="b-player">
-  <div class="b-player-info">
-    <div class="b-player-info-song">
-      <div
-        class="b-player-info-song-title"
-        ng-bind-html-unsafe="currentSong().title"></div>
-      <div
-        class="b-player-info-song-artist"
-        ng-bind-html-unsafe="currentSong().artist"></div>
-    </div>
+  <div class="b-player__controls__info">
+    <div class="b-player__controls__info__artist" ng-bind-html-unsafe="currentSong().artist"></div>
+    <div class="b-player__controls__info__title" ng-bind-html-unsafe="currentSong().title"></div>
   </div>
 
-  <div class="b-player-controls">
-    <div class="b-player-controls-playback">
-      <button class="b-player-controls-playback-btn prev" ng-click='controls.prev()'>&lt; prev</button>
+  <div class="b-player__controls__navigation">
+    <div class="b-player__controls__navigation__prev">
+      <div class="b-player__controls__navigation__prev-btn" ng-click="controls.prev()"></div>
+    </div>
 
-      <span
-        ng-class="{
-          'b-player-controls-playback-btn-pause': true,
-          'paused': isPaused
-        }"
-        ng-click='controls.toggle()'
+    <div
+      class="b-player__controls__navigation__play"
       >
-        <button class="b-player-controls-playback-btn b-playing">pause</button>
-        <button class="b-player-controls-playback-btn b-paused">play</button>
-      </span>
-
-      <button class="b-player-controls-playback-btn next" ng-click='controls.next()'>next &gt;</button>
-
-      <div class="b-player-controls-playback-timer">
-        <div class="b-player-controls-playback-timer-current">{{time | duration}}</div>
-        <div class="b-player-controls-playback-timer-progress b-slider"></div>
-        <div class="b-player-controls-playback-timer-total">{{currentSong().duration | duration}}</div>
-      </div>
+      <div
+        ng-click="controls.toggle()"
+        ng-show="isPaused"
+        class="b-player__controls__navigation__play__play"
+        ></div>
+      <div
+        ng-click="controls.toggle()"
+        ng-hide="isPaused"
+        class="b-player__controls__navigation__play__pause"
+        ></div>
     </div>
 
-    <div class="b-player-controls-volume">
-      <div class="b-player-controls-volume-mute"></div>
-      <div class="b-player-controls-volume-progress b-slider"></div>
+    <div class="b-player__controls__navigation__next">
+      <div class="b-player__controls__navigation__next-btn" ng-click="controls.next()"></div>
     </div>
   </div>
+
+  <div class="clear"></div>
+  <div class="b-player__controls__splitter"></div>
+
+  <div class="b-player__controls__playback">
+    <div
+      slider="time"
+      slider-update="update(progress)"
+      slider-max="duration"
+      class="slider b-player__controls__playback__progress"
+      ></div>
+
+    <div
+      ng-class="{'b-player__controls__playback__time--left': showTimeLeft}"
+      class="b-player__controls__playback__time">
+      <div
+        ng-bind="time | duration"
+        ng-click="showTimeLeft = true"
+        class="b-player__controls__playback__time__elapsed"
+        ></div>
+      <div
+        ng-bind="(time - currentSong().duration) | duration"
+        ng-click="showTimeLeft = false"
+        class="b-player__controls__playback__time__left"
+        ></div>
+    </div>
+  </div>
+
+  <div class="b-player__controls__volume">
+    <div class="b-player__controls__volume__low"></div>
+    <div
+      slider="volume"
+      class="b-player__controls__volume__progress slider"
+      ></div>
+    <div class="b-player__controls__volume__high"></div>
+  </div>
+  <div class="clear"></div>
 
   <div class="b-player-search">
     <input type="search" name="search" class='b-player-search-dialog' autocomplete='off'>
   </div>
 
+  <div class="clear"></div>
   <ul class="b-player-playlist">
     <li
       id='aid_{{song.aid}}'
