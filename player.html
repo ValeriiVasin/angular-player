@@ -7,18 +7,26 @@
 
   <div class="b-player__controls__navigation">
     <div class="b-player__controls__navigation__prev">
-      <div class="b-player__controls__navigation__prev-btn"></div>
+      <div class="b-player__controls__navigation__prev-btn" ng-click="controls.prev()"></div>
     </div>
 
     <div
       class="b-player__controls__navigation__play"
       >
-      <div class="b-player__controls__navigation__play__play" ng-show="isPaused"></div>
-      <div class="b-player__controls__navigation__play__pause" ng-hide="isPaused"></div>
+      <div
+        ng-click="controls.toggle()"
+        ng-show="isPaused"
+        class="b-player__controls__navigation__play__play"
+        ></div>
+      <div
+        ng-click="controls.toggle()"
+        ng-hide="isPaused"
+        class="b-player__controls__navigation__play__pause"
+        ></div>
     </div>
 
     <div class="b-player__controls__navigation__next">
-      <div class="b-player__controls__navigation__next-btn"></div>
+      <div class="b-player__controls__navigation__next-btn" ng-click="controls.next()"></div>
     </div>
   </div>
 
@@ -58,36 +66,6 @@
     <div class="b-player__controls__volume__high"></div>
   </div>
   <div class="clear"></div>
-
-  <div class="b-player-controls">
-    <div class="b-player-controls-playback">
-      <button class="b-player-controls-playback-btn prev" ng-click='controls.prev()'>&lt; prev</button>
-
-      <span
-        ng-class="{
-          'b-player-controls-playback-btn-pause': true,
-          'paused': isPaused
-        }"
-        ng-click='controls.toggle()'
-      >
-        <button class="b-player-controls-playback-btn b-playing">pause</button>
-        <button class="b-player-controls-playback-btn b-paused">play</button>
-      </span>
-
-      <button class="b-player-controls-playback-btn next" ng-click='controls.next()'>next &gt;</button>
-
-      <div class="b-player-controls-playback-timer">
-        <div class="b-player-controls-playback-timer-current">{{time | duration}}</div>
-        <div class="b-player-controls-playback-timer-progress b-slider"></div>
-        <div class="b-player-controls-playback-timer-total">{{currentSong().duration | duration}}</div>
-      </div>
-    </div>
-
-    <div class="b-player-controls-volume">
-      <div class="b-player-controls-volume-mute"></div>
-      <div class="b-player-controls-volume-progress b-slider"></div>
-    </div>
-  </div>
 
   <div class="b-player-search">
     <input type="search" name="search" class='b-player-search-dialog' autocomplete='off'>

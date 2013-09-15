@@ -201,54 +201,6 @@
             background: url('../img/volume_high_btn.png');
             }
 
-
-
-    /** controls */
-    .b-player-controls {
-
-        }
-        .b-player-controls-playback {
-            margin: 15px 0;
-            }
-            .b-player-controls-playback.prev {
-
-                }
-
-            /** pause button */
-            .b-player-controls-playback-btn-pause {
-
-                }
-                .b-player-controls-playback-btn-pause .b-paused {
-                    display: none;
-                    }
-                .b-player-controls-playback-btn-pause .b-playing {
-                    display: inline-block;
-                    }
-                .b-player-controls-playback-btn-pause.paused .b-playing {
-                    display: none;
-                    }
-                .b-player-controls-playback-btn-pause.paused .b-paused {
-                    display: inline-block;
-                    }
-
-            .b-player-controls-playback.next {
-
-                }
-            .b-player-controls-playback-timer {
-                overflow: hidden;
-                width: 100px;
-                margin: 10px auto;
-                }
-                .b-player-controls-playback-timer-current {
-                    float: left;
-                    }
-                .b-player-controls-playback-timer-progress {
-
-                    }
-                .b-player-controls-playback-timer-total {
-                    float: right;
-                    }
-
     /** search dialog */
     .b-player-search {
         display: none;
@@ -261,6 +213,7 @@
 
     /** playlist */
     .b-player-playlist {
+        margin-top: 15px;
         height: 600px;
         overflow: auto;
         }
