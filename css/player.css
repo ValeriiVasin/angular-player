@@ -61,6 +61,12 @@
         overflow: hidden;
         width: 120px;
         height: 40px;
+        -moz-user-select: none;
+        -o-user-select: none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
         }
         .b-player__controls__navigation__prev,
         .b-player__controls__navigation__next {
@@ -165,6 +171,12 @@
                 cursor: pointer;
                 width: 45px;
                 text-align: right;
+                -moz-user-select: none;
+                -o-user-select: none;
+                -khtml-user-select: none;
+                -webkit-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
             }
             .b-player__controls__playback__time__elapsed,
             .b-player__controls__playback__time--left .b-player__controls__playback__time__left {
@@ -225,7 +237,7 @@
             background-color: #f6f6f6;
             color: black;
 
-            -moz-user-select': none;
+            -moz-user-select: none;
             -o-user-select: none;
             -khtml-user-select: none;
             -webkit-user-select: none;
