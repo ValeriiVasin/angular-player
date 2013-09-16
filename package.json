@@ -1,0 +1,34 @@
+{
+  "name": "player",
+  "version": "0.0.1",
+  "description": "AngularJS player",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "keywords": [
+    "angular",
+    "player",
+    "mp3",
+    "song",
+    "artist",
+    "audio"
+  ],
+  "author": "Valerii Vasin",
+  "license": "MIT",
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "karma-script-launcher": "~0.1.0",
+    "karma-chrome-launcher": "~0.1.0",
+    "karma-firefox-launcher": "~0.1.0",
+    "karma-html2js-preprocessor": "~0.1.0",
+    "karma-jasmine": "~0.1.3",
+    "karma-requirejs": "~0.1.0",
+    "karma-coffee-preprocessor": "~0.1.0",
+    "karma-phantomjs-launcher": "~0.1.0",
+    "karma": "~0.10.2",
+    "grunt-karma": "~0.6.2"
+  }
+}
