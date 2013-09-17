@@ -454,4 +454,118 @@
     }
   ]);
 
+  /**
+   * Audio element abstraction
+   * http://www.w3schools.com/tags/ref_av_dom.asp
+   */
+  app.factory('Audio', ['$timeout', function ($timeout) {
+    var player = document.getElementById('player'),
+
+        props = {
+          volume: localStorage.getItem('volume'),
+          src: null,
+          paused: false,
+          muted: false,
+          time: null,
+          ended: false
+        },
+
+        floor = Math.floor;
+
+    // set initial volume
+    volume( props.volume ? Number(props.volume) : 100 );
+
+    /**
+     * Get / set music source
+     * @private
+     */
+    function _source(src) {
+      if (typeof src === 'undefined') {
+        return src;
+      }
+
+      player.src = props.src = src;
+    }
+
+    /**
+     * Get / set volume level: [0..100]
+     */
+    function volume(vol) {
+      if (typeof vol === 'undefined') {
+        return props.volume;
+      }
+
+      props.volume  = vol;
+      player.volume = floor(vol / 100);
+    }
+
+    function play(src) {
+      if (typeof src !== 'undefined') {
+        _source(src);
+      }
+
+      props.paused = props.ended = false;
+      player.play();
+    }
+
+    function pause() {
+      props.paused = true;
+      player.pause();
+    }
+
+    /**
+     * Toggle pause state
+     * @param  {Boolean} state Pause or not. If true: pause
+     */
+    function togglePause(state) {
+      if (state) {
+        pause();
+      } else {
+        play();
+      }
+    }
+
+    /**
+     * Get / set time
+     */
+    function time(value) {
+      if (typeof value === 'undefined') {
+        return props.time;
+      }
+
+      player.currentTime = props.time = value;
+    }
+
+    /**
+     * Checks ended property and let know that track has been ended
+     * @return {Boolean} Ended state
+     */
+    function isEnded() {
+      return props.ended;
+    }
+
+    // observe events
+    $(player).on({
+      timeupdate: function () {
+        $timeout(function () {
+          props.time = floor(player.currentTime);
+        });
+      },
+
+      ended: function () {
+        $timeout(function () {
+          props.ended = true;
+        });
+      }
+    });
+
+    return {
+      volume: volume,
+      play: play,
+      time: time,
+      togglePause: togglePause,
+      isEnded: isEnded
+    };
+  }]);
+
 }());
