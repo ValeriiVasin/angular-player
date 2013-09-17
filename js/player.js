@@ -237,9 +237,9 @@
     }
   ]);
 
-  app.directive('ngPlayer', [
-    '$timeout', 'Library', 'Queue',
-    function($timeout, Library, Queue) {
+  app.directive('ngPlayer', ['Library', 'Queue', 'Audio',
+                   function ( Library,   Queue,   Audio ) {
+
       return {
         restrict: 'E',
         templateUrl: function(element, attrs) {
@@ -249,9 +249,6 @@
           songs: '='
         },
         link: function(scope) {
-          var player = document.getElementById('player'),
-            volume = localStorage.getItem('volume');
-
           // time show mode
           scope.showTimeLeft = false;
 
@@ -270,21 +267,46 @@
             scope.duration = current.duration;
           });
 
+          // update time from song progress slider
           scope.update = function(time) {
-            player.currentTime = time;
+            Audio.time(time);
           };
 
-          scope.volume = volume ? Number(volume) : 100;
-          scope.$watch('volume', function(value) {
-            player.volume = value === 0 ? value : (value / 100);
-            localStorage.setItem('volume', value);
+          // watch volume changes
+          scope.volume = Audio.volume();
+          scope.$watch('volume', function(value, old) {
+            if (value === old) {
+              return;
+            }
+            Audio.volume(value);
           });
 
-          // currently playing song time
+          // watch and update current time
           scope.time = 0;
+          scope.$watch(function () {
+            return Audio.time();
+          }, function (value) {
+            scope.time = value;
+          });
 
-          // pause state
-          scope.isPaused = true;
+          // watch when ended
+          scope.$watch(function () {
+            return Audio.ended();
+          }, function (value) {
+            if (value) {
+              scope.controls.next();
+              Audio.ended(false);
+            }
+          });
+
+          // watch pause changes
+          scope.isPaused = Audio.prop('paused');
+          scope.$watch(function () {
+            return Audio.prop('paused');
+          }, function (value) {
+            scope.isPaused = value;
+          });
+
 
           // currently selected song
           scope.selected = 0;
@@ -334,17 +356,6 @@
             return typeof position === 'number' ? position + 1 : '';
           };
 
-          $(player).on({
-            timeupdate: function() {
-              scope.$apply(function() {
-                scope.time = Math.floor(player.currentTime);
-              });
-            },
-            ended: function() {
-              scope.controls.next();
-            }
-          });
-
           scope.songs = function() {
             return Library.songs();
           };
@@ -358,8 +369,9 @@
               Queue.addToPrev(Library.getCurrentSong());
             }
             Library.setCurrentSong(index);
-            player.src = Library.currentSong().url;
-            scope.controls.play();
+            Audio.play(
+              Library.currentSong().url
+            );
           };
 
           scope.isCurrentSong = function(id) {
@@ -368,23 +380,7 @@
 
           // controls
           scope.controls = {};
-          scope.controls.pause = function() {
-            player.pause();
-            scope.isPaused = true;
-          };
-
-          scope.controls.play = function() {
-            player.play();
-            scope.isPaused = false;
-          };
-
-          scope.controls.toggle = function() {
-            if (scope.isPaused) {
-              scope.controls.play();
-            } else {
-              scope.controls.pause();
-            }
-          };
+          scope.controls.toggle = Audio.togglePause;
 
           scope.controls.next = function() {
             var index = Queue.next();
@@ -453,5 +449,141 @@
       };
     }
   ]);
+
+  /**
+   * Audio element abstraction
+   * http://www.w3schools.com/tags/ref_av_dom.asp
+   */
+  app.factory('Audio', ['$timeout', function ($timeout) {
+    var player = document.createElement('audio'),
+
+        props = {
+          src:    null,
+          time:   null,
+          volume: localStorage.getItem('volume'),
+
+          // initial value: "not playing"
+          paused: true,
+          muted:  false,
+          ended:  false
+        },
+
+        floor = Math.floor;
+
+    angular.element('body').append(player);
+
+    // set initial volume
+    volume( props.volume ? Number(props.volume) : 100 );
+
+    /**
+     * Get / set music source
+     * @private
+     */
+    function _source(src) {
+      if (typeof src === 'undefined') {
+        return src;
+      }
+
+      player.src = props.src = src;
+    }
+
+    /**
+     * Get / set volume level: [0..100]
+     */
+    function volume(vol) {
+      if (typeof vol === 'undefined') {
+        return props.volume;
+      }
+
+      props.volume  = vol;
+      player.volume = vol / 100;
+      localStorage.setItem('volume', vol);
+    }
+
+    function play(src) {
+      if (typeof src !== 'undefined') {
+        _source(src);
+      }
+
+      props.paused = props.ended = false;
+      player.play();
+    }
+
+    function pause() {
+      props.paused = true;
+      player.pause();
+    }
+
+    /**
+     * Toggle pause state
+     * @param  {Boolean} state Pause or not. If true: pause
+     */
+    function togglePause(state) {
+      if (typeof state === 'undefined') {
+        state = !props.paused;
+      }
+
+      if (state) {
+        pause();
+      } else {
+        play();
+      }
+    }
+
+    /**
+     * Get / set time
+     */
+    function time(value) {
+      if (typeof value === 'undefined') {
+        return props.time;
+      }
+
+      player.currentTime = props.time = value;
+    }
+
+    /**
+     * Set / get ended property. It could let know that song is ended
+     */
+    function ended(value) {
+      if (typeof value === 'undefined') {
+        return props.ended;
+      }
+
+      props.ended = value;
+    }
+
+    // observe events
+    $(player).on({
+      timeupdate: function () {
+        $timeout(function () {
+          props.time = floor(player.currentTime);
+        });
+      },
+
+      ended: function () {
+        $timeout(function () {
+          ended(true);
+        });
+      }
+    });
+
+    // props getter
+    function prop(name) {
+      if ( !props.hasOwnProperty(name) ) {
+        console.error('prop `'+ name +'` does not exist');
+      }
+
+      return props[name];
+    }
+
+    return {
+      play:        play,
+      time:        time,
+      prop:        prop,
+      ended:       ended,
+      volume:      volume,
+      togglePause: togglePause
+    };
+  }]);
 
 }());
