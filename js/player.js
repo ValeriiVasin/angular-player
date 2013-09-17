@@ -47,8 +47,8 @@
 
    app.factory('Library', function () {
       var currentSongId = null,
-           songs = [],
-           lib = {};
+          songs = [],
+          lib = {};
 
       lib = {
         isCurrentSong: function (index) {
@@ -82,7 +82,7 @@
 
    app.factory('Queue', function () {
       var next = [],
-           prev = [];
+          prev = [];
 
       return {
         addToNext: function (index) {
@@ -275,9 +275,6 @@
 
               // currently playing song time
               scope.time = 0;
-
-              // currently playing song progress
-              scope.progress = 0;
 
               // pause state
               scope.isPaused = true;
