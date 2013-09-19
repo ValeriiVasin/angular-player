@@ -291,11 +291,11 @@
 
           // watch when ended
           scope.$watch(function () {
-            return Audio.ended();
+            return Audio.prop('ended');
           }, function (value) {
             if (value) {
               scope.controls.next();
-              Audio.ended(false);
+              Audio.prop('ended', false);
             }
           });
 
@@ -305,6 +305,14 @@
             return Audio.prop('paused');
           }, function (value) {
             scope.isPaused = value;
+          });
+
+          // watch loop changes
+          scope.loop = Audio.prop('loop');
+          scope.$watch(function () {
+            return Audio.prop('loop');
+          }, function (value) {
+            scope.loop = value;
           });
 
 
@@ -381,6 +389,9 @@
           // controls
           scope.controls = {};
           scope.controls.toggle = Audio.togglePause;
+          scope.toggleLoop = function () {
+            Audio.prop('loop', !scope.loop);
+          };
 
           scope.controls.next = function() {
             var index = Queue.next();
@@ -465,7 +476,8 @@
           // initial value: "not playing"
           paused: true,
           muted:  false,
-          ended:  false
+          ended:  false,
+          loop:   false
         },
 
         floor = Math.floor;
@@ -541,17 +553,6 @@
       player.currentTime = props.time = value;
     }
 
-    /**
-     * Set / get ended property. It could let know that song is ended
-     */
-    function ended(value) {
-      if (typeof value === 'undefined') {
-        return props.ended;
-      }
-
-      props.ended = value;
-    }
-
     // observe events
     $(player).on({
       timeupdate: function () {
@@ -562,25 +563,36 @@
 
       ended: function () {
         $timeout(function () {
-          ended(true);
+          prop('ended', true);
         });
       }
     });
 
     // props getter
-    function prop(name) {
+    function prop(name, value) {
       if ( !props.hasOwnProperty(name) ) {
-        console.error('prop `'+ name +'` does not exist');
+        throw new Error('prop `'+ name +'` does not exist');
       }
 
-      return props[name];
+      // getter
+      if (typeof value === 'undefined') {
+        return props[name];
+      }
+
+      // setter
+      props[name] = value;
+
+      switch (name) {
+        case 'loop':
+          player.loop = Boolean(value);
+          break;
+      }
     }
 
     return {
       play:        play,
       time:        time,
       prop:        prop,
-      ended:       ended,
       volume:      volume,
       togglePause: togglePause
     };

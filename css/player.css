@@ -166,7 +166,7 @@
                 color: white;
                 overflow: hidden;
                 margin-left: 7px;
-                margin-top: -3px;
+                margin-top: -5px;
                 font-size: 16px;
                 cursor: pointer;
                 width: 45px;
@@ -184,8 +184,25 @@
                 }
             .b-player__controls__playback__time__left,
             .b-player__controls__playback__time--left .b-player__controls__playback__time__elapsed {
-                    display: none;
+                display: none;
                 }
+
+    .b-player__controls__buttons {
+        float: left;
+        margin-left: 15px;
+        margin-top: -4px;
+        }
+        .b-player__controls__buttons__loop,
+        .b-player__controls__buttons__loop--active {
+            width: 14px;
+            height: 15px;
+            background: url('../img/repeat_btn.png') left top no-repeat;
+            cursor: pointer;
+            }
+        .b-player__controls__buttons__loop--active {
+            background: url('../img/repeat_btn_active.png') left top no-repeat;
+            }
+
 
     .b-player__controls__volume {
         width: 146px;

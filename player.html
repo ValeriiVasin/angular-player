@@ -57,6 +57,16 @@
     </div>
   </div>
 
+  <ul class="b-player__controls__buttons">
+    <li
+      ng-click="toggleLoop()"
+      ng-class="{
+        'b-player__controls__buttons__loop--active': loop,
+        'b-player__controls__buttons__loop': !loop
+      }"
+      ></li>
+  </ul>
+
   <div class="b-player__controls__volume">
     <div class="b-player__controls__volume__low"></div>
     <div
