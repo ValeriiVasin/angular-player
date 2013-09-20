@@ -182,7 +182,12 @@
         scope: {
           slider: '=',
           update: '&sliderUpdate',
-          max: '=sliderMax'
+          max: '=sliderMax',
+
+          /**
+           * @todo Think how to remove downloading progress from slider
+           */
+          preload: '=sliderPreload'
         },
         link: function(scope, element, attrs) {
           // prevent applying time changes while user sliding
@@ -315,6 +320,24 @@
             scope.loop = value;
           });
 
+          // watch progress
+          scope.downloadProgress = { left: 0, width: 0 };
+          scope.$watch(function () {
+            return Audio.getProgress();
+          }, function (value, oldValue) {
+            if (value === oldValue) {
+              return;
+            }
+
+            // convert progress seconds into starting left point and width
+            var start = Math.floor( (value.start / scope.duration) * 100 ),
+                end   = Math.floor( (value.end   / scope.duration) * 100 );
+
+            scope.downloadProgress = {
+              left: start + '%',
+              width: (end - start) + '%'
+            };
+          });
 
           // currently selected song
           scope.selected = 0;
@@ -480,6 +503,11 @@
           loop:   false
         },
 
+        // last progress range
+        // see: http://www.sitepoint.com/essential-audio-and-video-events-for-html5
+        // `start` and `end` - seconds
+        progress = { start: 0, end: 0 },
+
         floor = Math.floor;
 
     angular.element('body').append(player);
@@ -497,6 +525,9 @@
       }
 
       player.src = props.src = src;
+
+      // reset progress
+      progress = { start: 0, end: 0 };
     }
 
     /**
@@ -553,20 +584,42 @@
       player.currentTime = props.time = value;
     }
 
-    // observe events
-    $(player).on({
-      timeupdate: function () {
-        $timeout(function () {
-          props.time = floor(player.currentTime);
-        });
-      },
+    $(player)
 
-      ended: function () {
-        $timeout(function () {
-          prop('ended', true);
-        });
-      }
-    });
+      // preload=auto is needed for progress event
+      .attr('preload', 'auto')
+
+      // observe events
+      .on({
+        timeupdate: function () {
+          $timeout(function () {
+            props.time = floor(player.currentTime);
+          });
+        },
+
+        ended: function () {
+          $timeout(function () {
+            prop('ended', true);
+          });
+        },
+
+        progress: function () {
+          var buffered = player.buffered,
+              last     = buffered.length - 1;
+
+          // sometimes nothing is loaded at the moment
+          if (buffered.length === 0) {
+            return;
+          }
+
+          $timeout(function () {
+            progress = {
+              start: buffered.start(last),
+              end: buffered.end(last)
+            };
+          });
+        }
+      });
 
     // props getter
     function prop(name, value) {
@@ -589,11 +642,16 @@
       }
     }
 
+    function getProgress() {
+      return progress;
+    }
+
     return {
       play:        play,
       time:        time,
       prop:        prop,
       volume:      volume,
+      getProgress: getProgress,
       togglePause: togglePause
     };
   }]);

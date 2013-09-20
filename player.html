@@ -1,8 +1,8 @@
 <audio id='player'></audio>
 <div class="b-player">
   <div class="b-player__controls__info">
-    <div class="b-player__controls__info__artist" ng-bind-html-unsafe="currentSong().artist"></div>
-    <div class="b-player__controls__info__title" ng-bind-html-unsafe="currentSong().title"></div>
+    <div class="b-player__controls__info__artist" ng-bind-html="currentSong().artist"></div>
+    <div class="b-player__controls__info__title" ng-bind-html="currentSong().title"></div>
   </div>
 
   <div class="b-player__controls__navigation">
@@ -38,8 +38,13 @@
       slider="time"
       slider-update="update(progress)"
       slider-max="duration"
+      slider-preload="downloadProgress"
       class="slider b-player__controls__playback__progress"
-      ></div>
+      >
+      <div class="b-player__controls__playback__progress__download"
+        ng-style="preload"
+        ></div>
+    </div>
 
     <div
       ng-class="{'b-player__controls__playback__time--left': showTimeLeft}"
@@ -100,7 +105,7 @@
       <div class="b-player-playlist-item-inner b-position">{{$index + 1}}</div>
       <div
         class="b-player-playlist-item-inner b-song"
-        ng-bind-html-unsafe="song.artist + ' - ' + song.title"></div>
+        ng-bind-html="song.artist + ' - ' + song.title"></div>
       <div class="b-player-playlist-item-inner b-duration">
         {{song.duration | duration}}
       </div>

@@ -160,13 +160,21 @@
             width: 225px;
             float: left;
             }
+            .b-player__controls__playback__progress__download {
+                position: absolute;
+                height: 100%;
+                background-color: white;
+                opacity: 0.15;
+                border-radius: 4px;
+                }
+
 
         .b-player__controls__playback__time {
                 float: left;
                 color: white;
                 overflow: hidden;
                 margin-left: 7px;
-                margin-top: -5px;
+                margin-top: -4px;
                 font-size: 16px;
                 cursor: pointer;
                 width: 45px;
