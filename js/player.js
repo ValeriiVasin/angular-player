@@ -329,13 +329,12 @@
               return;
             }
 
-            // convert progress seconds into starting left point and width
-            var start = Math.floor( (value.start / scope.duration) * 100 ),
-                end   = Math.floor( (value.end   / scope.duration) * 100 );
+            // convert progress seconds to width
+            var end = Math.floor( (value.end / scope.duration) * 100 );
 
             scope.downloadProgress = {
-              left: start + '%',
-              width: (end - start) + '%'
+              left: 0,
+              width: end + '%'
             };
           });
 
