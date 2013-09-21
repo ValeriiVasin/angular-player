@@ -46,6 +46,72 @@
     };
   });
 
+  app.factory('Playlist', [function () {
+    var _playlists = {};
+
+    // playlists counter
+    var count = 0;
+
+    // songs index
+    var index = 0;
+
+    var factory = {
+      add: add,
+      use: use,
+      has: has
+    };
+
+    /**
+     * Use playlist
+     * @param  {String}  name Playlist name
+     */
+    function add(name, songs) {
+      if ( has(name) ) {
+        throw new Error('Playlist with name `' + name + '` exists');
+      }
+
+      songs = angular.copy(songs);
+
+      // add index
+      songs.forEach(function (song) {
+        song._index = index;
+        index += 1;
+      });
+
+      _playlists[name] = songs;
+      count += 1;
+
+      return factory;
+    }
+
+    /**
+     * Use playlist
+     * @param  {String}  name Playlist name
+     * @return {Boolean}      Return result:
+     *                        true if playlist exist and could be used, otherwise: false
+     */
+    function use(name) {
+      if ( !has(name) ) {
+        return false;
+      }
+
+      factory.current = name;
+      factory.songs = _playlists[name];
+      return true;
+    }
+
+    /**
+     * Check playlist existance
+     * @param  {String}  name Playlist name
+     * @return {Boolean}      Result: true if playlist exist, otherwise: false
+     */
+    function has(name) {
+      return _playlists.hasOwnProperty(name);
+    }
+
+    return factory;
+  }]);
+
   app.factory('Library', function() {
     var currentSongId = null,
       songs = [],
@@ -242,23 +308,25 @@
     }
   ]);
 
-  app.directive('ngPlayer', ['Library', 'Queue', 'Audio',
-                   function ( Library,   Queue,   Audio ) {
+  app.directive('ngPlayer', ['Library', 'Queue', 'Audio', 'Playlist',
+                   function ( Library,   Queue,   Audio,   Playlist ) {
 
       return {
         restrict: 'E',
         templateUrl: function(element, attrs) {
           return attrs.view || 'views/player.html';
         },
-        scope: {
-          songs: '='
-        },
         link: function(scope) {
           // time show mode
           scope.showTimeLeft = false;
 
-          scope.$watch('songs', function(newSongs) {
-            Library.reset(newSongs);
+          scope.$watch(function () {
+            return Playlist.current;
+          }, function (name) {
+            if ( !name ) {
+              return;
+            }
+            Library.reset( Playlist.songs );
           });
 
           scope.$watch(function() {
