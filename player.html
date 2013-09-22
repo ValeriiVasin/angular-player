@@ -1,8 +1,8 @@
 <audio id='player'></audio>
 <div class="b-player">
   <div class="b-player__controls__info">
-    <div class="b-player__controls__info__artist" ng-bind-html="currentSong().artist"></div>
-    <div class="b-player__controls__info__title" ng-bind-html="currentSong().title"></div>
+    <div class="b-player__controls__info__artist" ng-bind-html="currentSong.artist"></div>
+    <div class="b-player__controls__info__title" ng-bind-html="currentSong.title"></div>
   </div>
 
   <div class="b-player__controls__navigation">
@@ -55,7 +55,7 @@
         class="b-player__controls__playback__time__elapsed"
         ></div>
       <div
-        ng-bind="(time - currentSong().duration) | duration"
+        ng-bind="(time - duration) | duration"
         ng-click="showTimeLeft = false"
         class="b-player__controls__playback__time__left"
         ></div>
@@ -91,17 +91,17 @@
     <li
       id='aid_{{song.aid}}'
       ng-class='{
-          "playing": isCurrentSong($index),
-          "b-player-playlist-item": true,
+          "playing": isCurrentSong(song),
           "selected": isSelected($index),
-          "queued": positionInsideQueue($index)
+          "queued": positionInsideQueue(song)
       }'
-      ng-dblclick='playSong($index)'
+      ng-dblclick='playSong(song)'
       ng-click='setSelected($index)'
       ng-repeat='song in songs'
+      class="b-player-playlist-item"
       >
       <div class="b-player-playlist-item-inner b-state">
-        <span ng-bind="positionInsideQueue($index)"></span>
+        <span ng-bind="positionInsideQueue(song)"></span>
       </div>
       <div class="b-player-playlist-item-inner b-position">{{$index + 1}}</div>
       <div

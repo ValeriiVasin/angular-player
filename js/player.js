@@ -46,7 +46,7 @@
     };
   });
 
-  app.factory('Playlist', [function () {
+  app.factory('Playlist', ['Audio', 'Queue', function (Audio, Queue) {
     var _playlists = {};
 
     // all songs array
@@ -55,13 +55,27 @@
     // playlists counter
     var count = 0;
 
+    var current = { songs: [], name: null };
+
     var factory = {
       add: add,
       use: use,
       has: has,
 
-      // current: {name, songs}
-      current: null
+      // current: {name, songs, length}
+      current: current,
+
+      // currently playing song
+      currentSong: null,
+      getSong: getSong,
+
+      prevIndex: prevIndex,
+      nextIndex: nextIndex,
+
+      play: play,
+      next: next,
+      prev: prev,
+      playByPosition: playByPosition
     };
 
     /**
@@ -86,10 +100,6 @@
       _playlists[name] = songs;
       count += 1;
 
-      if (count === 1) {
-        use(name);
-      }
-
       return factory;
     }
 
@@ -104,10 +114,10 @@
         return false;
       }
 
-      factory.current = {
-        name:  name,
-        songs: _playlists[name]
-      };
+      current.name = name,
+      current.songs = _playlists[name];
+      current.length = _playlists[name].length;
+      factory.currentSong = getSong(0);
 
       return true;
     }
@@ -121,43 +131,101 @@
       return _playlists.hasOwnProperty(name);
     }
 
+    //
+    // Playing interface
+    //
+
+    function getSong(position) {
+      return current.songs[position];
+    }
+
+    function nextIndex(index) {
+      var next;
+
+      if ( typeof index === 'undefined' ) {
+        index =  current.songs.indexOf(factory.currentSong);
+
+        if (index === -1) {
+          index = 0;
+        }
+      }
+
+      next = index + 1;
+      return next < current.length ? next : 0;
+    }
+
+    function prevIndex(index) {
+      var prev;
+
+      if ( typeof index === 'undefined' ) {
+        index =  current.songs.indexOf(factory.currentSong);
+        if (index === -1) {
+          index = 0;
+        }
+      }
+
+      prev = index - 1;
+      return prev >= 0 ? prev : current.length - 1;
+    }
+
+    // Play song
+    function play(song) {
+      if (typeof song === 'number') {
+        song = _songsMap[song];
+      }
+
+      factory.currentSong = song;
+      Audio.play( song.url );
+    }
+
+    function playByPosition(position) {
+      var song = getSong(position);
+
+      Queue.prev(song._index);
+      play( song );
+    }
+
+    /**
+     * Play next song
+     */
+    function next() {
+      var index = Queue.next(),
+          song;
+
+      // next queue is empty
+      if (typeof index === 'undefined') {
+        song = getSong( nextIndex() );
+
+        // save to prev queue
+        Queue.prev(song._index);
+        play( song );
+        return;
+      }
+
+      Queue.prev(index);
+      play(index);
+    }
+
+    /**
+     * Play prev song
+     */
+    function prev() {
+      var index = Queue.prev(),
+          song;
+
+      if (typeof index === 'undefined') {
+        // prev queue is empty
+        song = getSong( prevIndex() );
+
+        play( song );
+        return;
+      }
+
+      play(index);
+    }
+
     return factory;
   }]);
-
-  app.factory('Library', function() {
-    var currentSongId = null,
-      songs = [],
-      lib = {};
-
-    lib = {
-      isCurrentSong: function(index) {
-        return currentSongId === index;
-      },
-
-      currentSong: function() {
-        return songs[currentSongId];
-      },
-
-      setCurrentSong: function(index) {
-        currentSongId = index;
-      },
-
-      getCurrentSong: function() {
-        return currentSongId;
-      },
-
-      songs: function() {
-        return songs;
-      },
-
-      reset: function(data) {
-        songs = data;
-        currentSongId = 0;
-      }
-    };
-
-    return lib;
-  });
 
   app.factory('Queue', [function () {
     var _next = [], // FIFO
@@ -341,8 +409,8 @@
     }
   ]);
 
-  app.directive('ngPlayer', ['Library', 'Queue', 'Audio', 'Playlist', 'Navigation',
-                   function ( Library,   Queue,   Audio,   Playlist,   Navigation ) {
+  app.directive('ngPlayer', ['Queue', 'Audio', 'Playlist', 'Navigation',
+                   function ( Queue,   Audio,   Playlist,   Navigation ) {
 
       return {
         restrict: 'E',
@@ -353,18 +421,8 @@
           // time show mode
           scope.showTimeLeft = false;
 
-          scope.$watch(function () {
-            return Playlist.current;
-          }, function (current, old) {
-            if ( current === old ) {
-              return;
-            }
-
-            Library.reset( current.songs );
-          });
-
           scope.$watch(function() {
-            return Library.currentSong();
+            return Playlist.currentSong;
           }, function(current, prev) {
             if (prev === current) {
               return;
@@ -372,6 +430,7 @@
 
             // save current song params
             scope.duration = current.duration;
+            scope.currentSong = current;
           });
 
           // update time from song progress slider
@@ -460,38 +519,23 @@
           };
 
           /**
-           * @todo Do it using Playlist
-           */
-          scope.playSelected = function() {
-            scope.playSong( Navigation.index );
-          };
-
-          /**
            * Queue position to display
-           * @param  {Number}      index  Song index
-           * @return {Number|String}      Position in queue or empty string
+           * @param  {Object}        index  Song
+           * @return {Number|String}        Position in queue or empty string
            */
-          scope.positionInsideQueue = function(index) {
-            var position = Queue.position(index);
+          scope.positionInsideQueue = function (song) {
+            var position = Queue.position(song._index);
+
             return typeof position === 'number' ? position + 1 : '';
           };
 
-          scope.currentSong = function() {
-            return Library.currentSong();
+          scope.playSong = function(song) {
+            Queue.prev(song._index);
+            Playlist.play(song);
           };
 
-          scope.playSong = function(index, skipQueue) {
-            if (!skipQueue) {
-              Queue.addToPrev(Library.getCurrentSong());
-            }
-            Library.setCurrentSong(index);
-            Audio.play(
-              Library.currentSong().url
-            );
-          };
-
-          scope.isCurrentSong = function(id) {
-            return Library.isCurrentSong(id);
+          scope.isCurrentSong = function(song) {
+            return scope.currentSong === song;
           };
 
           // controls
@@ -501,49 +545,29 @@
             Audio.prop('loop', !scope.loop);
           };
 
-          scope.controls.next = function() {
-            var index = Queue.next();
-
-            if (typeof index === 'undefined') {
-              index = Library.getCurrentSong() + 1;
-              if (index > Library.songs().length - 1) {
-                index = 0;
-              }
-            }
-
-            scope.playSong(index);
-          };
-
-          scope.controls.prev = function() {
-            var index = Queue.prev();
-
-            if (typeof index === 'undefined') {
-              index = Library.getCurrentSong() - 1;
-              if (index < 0) {
-                index = Library.songs().length - 1;
-              }
-            }
-
-            scope.playSong(index, true);
-          };
+          scope.controls.next = Playlist.next;
+          scope.controls.prev = Playlist.prev;
         }
       };
     }
   ]);
 
-  app.directive('shortcuts', ['Audio', 'Navigation', 'Queue',
-                    function ( Audio,   Navigation,   Queue ) {
+  app.directive('shortcuts', ['Audio', 'Navigation', 'Queue', 'Playlist',
+                    function ( Audio,   Navigation,   Queue,   Playlist ) {
 
     // keyboard shortcuts
     return function link(scope) {
       angular.element(document)
         .on('keydown', function(e) {
           scope.$apply(function() {
+            var song;
+
             switch (e.which) {
               case 81:
                 // Q - queue
-                // scope.toggleSelectedInQueue(); => use Navigation
-                Queue.toggleNext( Navigation.index );
+                Queue.toggleNext(
+                  Playlist.getSong(Navigation.index)._index
+                );
                 e.preventDefault();
                 break;
               case 32:
@@ -553,19 +577,20 @@
                 break;
               case 40:
                 // Down - select next item in the list
-                // scope.selectNext(); => use Navigation
                 Navigation.next();
                 e.preventDefault();
                 break;
               case 38:
                 // Up - select prev item in the list
-                // scope.selectPrev(); => use Navigation
                 Navigation.prev();
                 e.preventDefault();
                 break;
               case 13:
                 // Enter - play currently selected item
-                scope.playSelected();
+                song = Playlist.getSong(Navigation.index);
+                Queue.prev(song._index);
+                Playlist.play( song );
+
                 e.preventDefault();
                 break;
               case 84:
@@ -601,15 +626,11 @@
     }
 
     function next() {
-      var nextSelected = factory.index + 1;
-
-      factory.index = nextSelected < Playlist.current.songs.length ? nextSelected : 0;
+      factory.index = Playlist.nextIndex(factory.index);
     }
 
     function prev() {
-      var prevSelected = factory.index - 1;
-
-      factory.index = prevSelected < 0 ? Playlist.current.songs.length : prevSelected;
+      factory.index = Playlist.prevIndex(factory.index);
     }
 
     return factory;
