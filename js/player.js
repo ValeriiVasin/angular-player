@@ -49,16 +49,19 @@
   app.factory('Playlist', [function () {
     var _playlists = {};
 
+    // all songs array
+    var _songsMap  = [];
+
     // playlists counter
     var count = 0;
-
-    // songs index
-    var index = 0;
 
     var factory = {
       add: add,
       use: use,
-      has: has
+      has: has,
+
+      // current: {name, songs}
+      current: null
     };
 
     /**
@@ -74,12 +77,18 @@
 
       // add index
       songs.forEach(function (song) {
-        song._index = index;
-        index += 1;
+        var length = _songsMap.push(song);
+
+        // save index into song instance
+        song._index = length - 1;
       });
 
       _playlists[name] = songs;
       count += 1;
+
+      if (count === 1) {
+        use(name);
+      }
 
       return factory;
     }
@@ -95,8 +104,11 @@
         return false;
       }
 
-      factory.current = name;
-      factory.songs = _playlists[name];
+      factory.current = {
+        name:  name,
+        songs: _playlists[name]
+      };
+
       return true;
     }
 
@@ -343,11 +355,12 @@
 
           scope.$watch(function () {
             return Playlist.current;
-          }, function (name) {
-            if ( !name ) {
+          }, function (current, old) {
+            if ( current === old ) {
               return;
             }
-            Library.reset( Playlist.songs );
+
+            Library.reset( current.songs );
           });
 
           scope.$watch(function() {
@@ -461,10 +474,6 @@
           scope.positionInsideQueue = function(index) {
             var position = Queue.position(index);
             return typeof position === 'number' ? position + 1 : '';
-          };
-
-          scope.songs = function() {
-            return Library.songs();
           };
 
           scope.currentSong = function() {
@@ -594,13 +603,13 @@
     function next() {
       var nextSelected = factory.index + 1;
 
-      factory.index = nextSelected < Playlist.songs.length ? nextSelected : 0;
+      factory.index = nextSelected < Playlist.current.songs.length ? nextSelected : 0;
     }
 
     function prev() {
       var prevSelected = factory.index - 1;
 
-      factory.index = prevSelected < 0 ? Playlist.songs.length : prevSelected;
+      factory.index = prevSelected < 0 ? Playlist.current.songs.length : prevSelected;
     }
 
     return factory;
