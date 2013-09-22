@@ -98,9 +98,10 @@
       }'
       ng-dblclick='playSong($index)'
       ng-click='setSelected($index)'
-      ng-repeat='song in songs'>
+      ng-repeat='song in songs'
+      >
       <div class="b-player-playlist-item-inner b-state">
-        <span>{{positionInsideQueue($index)}}</span>
+        <span ng-bind="positionInsideQueue($index)"></span>
       </div>
       <div class="b-player-playlist-item-inner b-position">{{$index + 1}}</div>
       <div

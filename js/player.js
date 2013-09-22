@@ -329,8 +329,8 @@
     }
   ]);
 
-  app.directive('ngPlayer', ['Library', 'Queue', 'Audio', 'Playlist',
-                   function ( Library,   Queue,   Audio,   Playlist ) {
+  app.directive('ngPlayer', ['Library', 'Queue', 'Audio', 'Playlist', 'Navigation',
+                   function ( Library,   Queue,   Audio,   Playlist,   Navigation ) {
 
       return {
         restrict: 'E',
@@ -429,45 +429,33 @@
 
           // currently selected song
           scope.selected = 0;
-
-          scope.isSelected = function(id) {
-            return id === scope.selected;
-          };
-
-          scope.setSelected = function(id) {
-            scope.selected = id;
-          };
-
-          scope.selectNext = function() {
-            var next = scope.selected + 1;
-            if (next >= Library.songs().length) {
-              next = 0;
+          scope.$watch(function () {
+            return Navigation.index;
+          }, function (value, old) {
+            if (value === old) {
+              return;
             }
-            scope.selected = next;
+            scope.selected = value;
+          });
+
+          scope.isSelected = function(index) {
+            return index === scope.selected;
           };
 
-          scope.selectPrev = function() {
-            var prev = scope.selected - 1;
-            if (prev < 0) {
-              prev = Library.songs().length - 1;
-            }
-            scope.selected = prev;
-          };
-
-          scope.playSelected = function() {
-            scope.playSong(scope.selected);
+          scope.setSelected = function(index) {
+            Navigation.set(index);
           };
 
           /**
-           * Add or remove selected song in next queue
+           * @todo Do it using Playlist
            */
-          scope.toggleSelectedInQueue = function() {
-            Queue.toggleNext(scope.selected);
+          scope.playSelected = function() {
+            scope.playSong( Navigation.index );
           };
 
           /**
            * Queue position to display
-           * @param  {Number}      index Song index
+           * @param  {Number}      index  Song index
            * @return {Number|String}      Position in queue or empty string
            */
           scope.positionInsideQueue = function(index) {
@@ -529,48 +517,94 @@
 
             scope.playSong(index, true);
           };
-
-          // keyboard shortcuts
-          angular.element(document)
-            .bind('keydown', function(e) {
-              scope.$apply(function() {
-                switch (e.which) {
-                  case 81:
-                    // Q - queue
-                    scope.toggleSelectedInQueue();
-                    e.preventDefault();
-                    break;
-                  case 32:
-                    // Space - pause/unpause current song
-                    e.preventDefault();
-                    break;
-                  case 40:
-                    // Down - select next item in the list
-                    scope.selectNext();
-                    e.preventDefault();
-                    break;
-                  case 38:
-                    // Up - select prev item in the list
-                    scope.selectPrev();
-                    e.preventDefault();
-                    break;
-                  case 13:
-                    // Enter - play currently selected item
-                    scope.playSelected();
-                    e.preventDefault();
-                    break;
-                  case 84:
-                    // T - search box
-                    break;
-
-                    // no defaults
-                }
-              });
-            });
         }
       };
     }
   ]);
+
+  app.directive('shortcuts', ['Audio', 'Navigation', 'Queue',
+                    function ( Audio,   Navigation,   Queue ) {
+
+    // keyboard shortcuts
+    return function link(scope) {
+      angular.element(document)
+        .on('keydown', function(e) {
+          scope.$apply(function() {
+            switch (e.which) {
+              case 81:
+                // Q - queue
+                // scope.toggleSelectedInQueue(); => use Navigation
+                Queue.toggleNext( Navigation.index );
+                e.preventDefault();
+                break;
+              case 32:
+                // Space - pause/unpause current song
+                Audio.togglePause();
+                e.preventDefault();
+                break;
+              case 40:
+                // Down - select next item in the list
+                // scope.selectNext(); => use Navigation
+                Navigation.next();
+                e.preventDefault();
+                break;
+              case 38:
+                // Up - select prev item in the list
+                // scope.selectPrev(); => use Navigation
+                Navigation.prev();
+                e.preventDefault();
+                break;
+              case 13:
+                // Enter - play currently selected item
+                scope.playSelected();
+                e.preventDefault();
+                break;
+              case 84:
+                // T - search box
+                break;
+
+                // no defaults
+            }
+          });
+        });
+    };
+  }]);
+
+  app.factory('Navigation', ['Playlist', function (Playlist) {
+    var factory  = {
+      next:  next,
+      prev:  prev,
+      set:   set,
+      reset: reset,
+      index: 0
+    };
+
+    /**
+     * Set current index
+     * @param {Number} index Playlist index
+     */
+    function set(index) {
+      factory.index = index;
+    }
+
+    function reset() {
+      factory.index = 0;
+    }
+
+    function next() {
+      var nextSelected = factory.index + 1;
+
+      factory.index = nextSelected < Playlist.songs.length ? nextSelected : 0;
+    }
+
+    function prev() {
+      var prevSelected = factory.index - 1;
+
+      factory.index = prevSelected < 0 ? Playlist.songs.length : prevSelected;
+    }
+
+    return factory;
+  }]);
 
   /**
    * Audio element abstraction
