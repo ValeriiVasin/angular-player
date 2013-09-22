@@ -147,72 +147,93 @@
     return lib;
   });
 
-  app.factory('Queue', function() {
-    var next = [],
-      prev = [];
+  app.factory('Queue', [function () {
+    var _next = [], // FIFO
+        _prev = []; // LIFO
+
+    /**
+     * Getter setter of next song
+     * @param {Number} [index] If provided, index is added to next queue,
+     *                         otherwise: retrieve index from next queue
+     */
+    function next(index) {
+      if (typeof index === 'undefined') {
+        return _next.shift();
+      }
+
+      _next.push(index);
+    }
+
+    /**
+     * Add to next queue / or remove from it
+     * @param  {Number} index Song uniq index
+     */
+    function toggleNext(index) {
+      if ( _isInNextQueue(index) ) {
+        removeFromNext(index);
+      } else {
+        next(index);
+      }
+    }
+
+    /**
+     * Remove from next queue
+     * @param   {Number} index  Song uniq index
+     */
+    function removeFromNext(index) {
+      if ( _isInNextQueue(index) ) {
+        _next.splice( position(index) , 1);
+      }
+    }
+
+    /**
+     * Position in the next queue
+     * @return {Number|null} Position inside the next queue or null, if is not in queue
+     */
+    function position(index) {
+      var _position = _next.indexOf(index);
+
+      return _position === -1 ? null : _position;
+    }
+
+    /**
+     * Check song presence in next queue
+     *
+     * @param  {Number}  index Song uniq index
+     * @return {Boolean}       Result of check
+     */
+    function _isInNextQueue(index) {
+      return _next.indexOf(index) !== -1;
+    }
+
+    /**
+     * Get / add to prev queue
+     */
+    function prev(index) {
+      if (typeof index === 'undefined') {
+        return _prev.pop();
+      }
+
+      _prev.push(index);
+    }
+
+    // reset queue
+    function reset() {
+      _next = [];
+      _prev = [];
+    }
 
     return {
-      addToNext: function(index) {
-        next.push(index);
-      },
-
-      /**
-       * Remove from next queue
-       * @param   {Number} index Index of song inside of the playlist
-       */
-      removeFromNext: function(index) {
-        next = next.filter(function(_index) {
-          return index !== _index;
-        });
-      },
-
-      /**
-       * Add or remove from next queue
-       */
-      toggleNext: function(index) {
-        if (next.indexOf(index) === -1) {
-          this.addToNext(index);
-        } else {
-          this.removeFromNext(index);
-        }
-      },
-
-      /**
-       * Position in the next queue
-       * @return {Number|null} Position inside the next queue or null, if is not in queue
-       */
-      position: function(index) {
-        var position = next.indexOf(index);
-
-        return position > -1 ? position : null;
-      },
-
-      addToPrev: function(index) {
-        prev.push(index);
-      },
-
-      next: function() {
-        return next.shift();
-      },
-
-      prev: function() {
-        return prev.shift();
-      },
-
-      getNextQueue: function() {
-        return Array.prototype.slice.call(next, 0);
-      },
-
-      getPrevQueue: function() {
-        return Array.prototype.slice.call(prev, 0);
-      },
-
-      reset: function() {
-        next = [];
-        prev = [];
-      }
+      addToNext: next,
+      next: next,
+      position: position,
+      removeFromNext: removeFromNext,
+      toggleNext: toggleNext,
+      addToPrev: prev,
+      prev: prev,
+      reset: reset
     };
-  });
+  }]);
 
   //
   // Filters
