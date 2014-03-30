@@ -4,6 +4,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-html2js');
   grunt.loadNpmTasks('grunt-shell');
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.initConfig({
     karma: {
@@ -52,6 +53,16 @@ module.exports = function (grunt) {
     shell: {
       clean: {
         command: 'rm build/templates.js'
+      }
+    },
+
+    watch: {
+      build: {
+        files: ['player.html', 'js/*.js'],
+        tasks: ['build'],
+        options: {
+          livereload: true
+        }
       }
     }
   });

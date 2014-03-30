@@ -10,6 +10,7 @@ angular.module('Player.Audio', [])
           src:    null,
           time:   null,
           volume: localStorage.getItem('volume'),
+          shuffle: false,
 
           // initial value: "not playing"
           paused: true,
