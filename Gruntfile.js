@@ -1,5 +1,4 @@
 module.exports = function (grunt) {
-  grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-html2js');
@@ -7,17 +6,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.initConfig({
-    karma: {
-      options: {
-        configFile: 'karma.conf.js',
-        files: ['specs/**/*.js']
-      },
-      unit: {
-        singleRun: true,
-        browsers: ['PhantomJS']
-      }
-    },
-
     uglify: {
       build: {
         files: {
@@ -67,7 +55,6 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('test', ['karma:unit']);
   grunt.registerTask('build', ['html2js', 'concat', 'shell:clean']);
   grunt.registerTask('build:min', ['build', 'uglify']);
 };
