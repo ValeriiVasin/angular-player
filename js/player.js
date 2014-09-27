@@ -23,7 +23,7 @@ angular.module('Player', [
   'Player.Shortcuts'
 ])
 .directive('player', ['Queue', 'Audio', 'Playlist', 'Navigation',
-              function ( Queue,   Audio,   Playlist,   Navigation ) {
+            function ( Queue,   Audio,   Playlist,   Navigation ) {
 
     return {
       restrict: 'A',
@@ -47,7 +47,6 @@ angular.module('Player', [
           }
 
           // save current song params
-          scope.duration = current.duration;
           scope.currentSong = current;
         });
 
@@ -83,6 +82,13 @@ angular.module('Player', [
           }
         });
 
+        scope.duration = 0;
+        scope.$watch(function () {
+          return Audio.prop('duration');
+        }, function (duration) {
+          scope.duration = duration;
+        });
+
         // watch pause changes
         scope.isPaused = Audio.prop('paused');
         scope.$watch(function () {
@@ -109,7 +115,7 @@ angular.module('Player', [
           }
 
           // convert progress seconds to width
-          var end = Math.floor( (value.end / scope.duration) * 100 );
+          var end = Math.floor( (value.end / Audio.prop('duration')) * 100 );
 
           scope.downloadProgress = {
             left: 0,

@@ -8,9 +8,12 @@ angular.module('Player.Audio', [])
 
         props = {
           src:    null,
-          time:   null,
+          time:   0,
           volume: localStorage.getItem('volume'),
           shuffle: false,
+
+          // currently playing song duration
+          duration: 0,
 
           // initial value: "not playing"
           paused: true,
@@ -24,7 +27,16 @@ angular.module('Player.Audio', [])
         // `start` and `end` - seconds
         progress = { start: 0, end: 0 },
 
-        floor = Math.floor;
+        floor = Math.floor,
+
+        factory = {
+          play:        play,
+          time:        time,
+          prop:        prop,
+          volume:      volume,
+          getProgress: getProgress,
+          togglePause: togglePause
+        };
 
     angular.element('body').append(player);
 
@@ -119,6 +131,10 @@ angular.module('Player.Audio', [])
           });
         },
 
+        durationchange: function () {
+          prop('duration', player.duration);
+        },
+
         progress: function () {
           var buffered = player.buffered,
               last     = buffered.length - 1;
@@ -162,12 +178,5 @@ angular.module('Player.Audio', [])
       return progress;
     }
 
-    return {
-      play:        play,
-      time:        time,
-      prop:        prop,
-      volume:      volume,
-      getProgress: getProgress,
-      togglePause: togglePause
-    };
+    return factory;
   }]);
