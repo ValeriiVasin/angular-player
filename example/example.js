@@ -1,13 +1,13 @@
 ;(function () {
-    'use strict';
+  'use strict';
 
-    var app = angular.module('Example', ['Player', 'ngSanitize']);
+  angular.module('Example', ['Player'])
 
-    app.controller('ExampleCtrl', ['$scope', '$http', 'Playlist',
-                         function ( $scope,   $http,   Playlist ) {
+    .controller('ExampleCtrl', ['$scope', '$http', 'Playlist',
+                      function ( $scope,   $http,   Playlist ) {
 
-        $http.get('data.json').then(function (response) {
-            Playlist.add('default', response.data);
-        });
+      $http.get('data.json').then(function (response) {
+        Playlist.add('default', response.data);
+      });
     }]);
 }());

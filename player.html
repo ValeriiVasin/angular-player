@@ -3,11 +3,11 @@
   <div class="b-player__controls__info">
     <div
       class="b-player__controls__info__artist"
-      ng-bind-html="currentSong.artist"
+      ng-bind="currentSong.artist"
       ></div>
     <div
       class="b-player__controls__info__title"
-      ng-bind-html="currentSong.title"
+      ng-bind="currentSong.title"
       ></div>
   </div>
 
@@ -130,7 +130,7 @@
         ></div>
       <div
         class="b-player-playlist-item-inner b-song"
-        ng-bind-html="song.artist + ' - ' + song.title"
+        ng-bind="song.artist + ' - ' + song.title"
         ></div>
       <div
         class="b-player-playlist-item-inner b-duration"
