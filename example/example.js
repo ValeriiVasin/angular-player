@@ -3,11 +3,11 @@
 
     var app = angular.module('Example', ['Player', 'ngSanitize']);
 
-    app.controller('ExampleCtrl', ['$scope', '$http', function ($scope, $http) {
-        $scope.songs = [];
+    app.controller('ExampleCtrl', ['$scope', '$http', 'Playlist',
+                         function ( $scope,   $http,   Playlist ) {
 
         $http.get('data.json').then(function (response) {
-            $scope.songs = response.data;
+            Playlist.add('default', response.data);
         });
     }]);
 }());

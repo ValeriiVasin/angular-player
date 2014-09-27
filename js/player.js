@@ -28,12 +28,16 @@ angular.module('Player', [
     return {
       restrict: 'A',
       templateUrl: 'player.html',
-      scope: {
-        songs: '=playerPlaylist'
-      },
+      scope: true,
       link: function(scope) {
         // time show mode
         scope.showTimeLeft = false;
+
+        scope.$watchCollection(function () {
+          return Playlist.current.songs;
+        }, function (songs) {
+          scope.songs = songs;
+        });
 
         scope.$watch(function() {
           return Playlist.currentSong;

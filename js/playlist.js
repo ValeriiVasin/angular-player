@@ -53,6 +53,11 @@ angular.module('Player.Playlist', ['Player.Audio', 'Player.Queue'])
       _playlists[name] = songs;
       count += 1;
 
+      // if it's first playlist - use it
+      if ( count === 1 ) {
+        use(name);
+      }
+
       return factory;
     }
 
@@ -65,6 +70,11 @@ angular.module('Player.Playlist', ['Player.Audio', 'Player.Queue'])
     function use(name) {
       if ( !has(name) ) {
         return false;
+      }
+
+      // playlist is currently in use
+      if ( current.name === name ) {
+        return;
       }
 
       current.name = name,
