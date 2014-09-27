@@ -1,13 +1,22 @@
-<audio id='player'></audio>
+<audio id="player"></audio>
 <div class="b-player">
   <div class="b-player__controls__info">
-    <div class="b-player__controls__info__artist" ng-bind-html="currentSong.artist"></div>
-    <div class="b-player__controls__info__title" ng-bind-html="currentSong.title"></div>
+    <div
+      class="b-player__controls__info__artist"
+      ng-bind-html="currentSong.artist"
+      ></div>
+    <div
+      class="b-player__controls__info__title"
+      ng-bind-html="currentSong.title"
+      ></div>
   </div>
 
   <div class="b-player__controls__navigation">
     <div class="b-player__controls__navigation__prev">
-      <div class="b-player__controls__navigation__prev-btn" ng-click="controls.prev()"></div>
+      <div
+        class="b-player__controls__navigation__prev-btn"
+        ng-click="controls.prev()"
+        ></div>
     </div>
 
     <div
@@ -26,7 +35,10 @@
     </div>
 
     <div class="b-player__controls__navigation__next">
-      <div class="b-player__controls__navigation__next-btn" ng-click="controls.next()"></div>
+      <div
+        class="b-player__controls__navigation__next-btn"
+        ng-click="controls.next()"
+        ></div>
     </div>
   </div>
 
@@ -41,14 +53,18 @@
       slider-preload="downloadProgress"
       class="slider b-player__controls__playback__progress"
       >
-      <div class="b-player__controls__playback__progress__download"
+      <div
+        class="b-player__controls__playback__progress__download"
         ng-style="preload"
         ></div>
     </div>
 
     <div
-      ng-class="{'b-player__controls__playback__time--left': showTimeLeft}"
-      class="b-player__controls__playback__time">
+      ng-class="{
+        'b-player__controls__playback__time--left': showTimeLeft
+      }"
+      class="b-player__controls__playback__time"
+      >
       <div
         ng-bind="time | duration"
         ng-click="showTimeLeft = true"
@@ -83,32 +99,43 @@
   <div class="clear"></div>
 
   <div class="b-player-search">
-    <input type="search" name="search" class='b-player-search-dialog' autocomplete='off'>
+    <input
+      type="search"
+      name="search"
+      class="b-player-search-dialog"
+      autocomplete="off"
+      >
   </div>
 
   <div class="clear"></div>
   <ul class="b-player-playlist">
     <li
-      id='aid_{{song.aid}}'
-      ng-class='{
-          "playing": isCurrentSong(song),
-          "selected": isSelected($index),
-          "queued": positionInsideQueue(song)
-      }'
-      ng-dblclick='playSong(song)'
-      ng-click='setSelected($index)'
-      ng-repeat='song in songs'
+      id="aid_{{song.aid}}"
+      ng-class="{
+        'playing':  isCurrentSong(song),
+        'selected': isSelected($index),
+        'queued':   positionInsideQueue(song)
+      }"
+      ng-dblclick="playSong(song)"
+      ng-click="setSelected($index)"
+      ng-repeat="song in songs"
       class="b-player-playlist-item"
       >
       <div class="b-player-playlist-item-inner b-state">
         <span ng-bind="positionInsideQueue(song)"></span>
       </div>
-      <div class="b-player-playlist-item-inner b-position">{{$index + 1}}</div>
+      <div
+        class="b-player-playlist-item-inner b-position"
+        ng-bind="$index + 1"
+        ></div>
       <div
         class="b-player-playlist-item-inner b-song"
-        ng-bind-html="song.artist + ' - ' + song.title"></div>
-      <div class="b-player-playlist-item-inner b-duration" ng-bind="song.duration | duration">
-      </div>
+        ng-bind-html="song.artist + ' - ' + song.title"
+        ></div>
+      <div
+        class="b-player-playlist-item-inner b-duration"
+        ng-bind="song.duration | duration"
+        ></div>
     </li>
   </ul>
 </div>
