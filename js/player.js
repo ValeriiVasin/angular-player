@@ -9,7 +9,7 @@
  *  - url: String
  *
  * @example
- * <ng-player></ng-player>
+ *   <div player></div>
  */
 
 angular.module('Player', [
@@ -22,12 +22,15 @@ angular.module('Player', [
   'Player.Templates',
   'Player.Shortcuts'
 ])
-.directive('ngPlayer', ['Queue', 'Audio', 'Playlist', 'Navigation',
+.directive('player', ['Queue', 'Audio', 'Playlist', 'Navigation',
               function ( Queue,   Audio,   Playlist,   Navigation ) {
 
     return {
-      restrict: 'E',
+      restrict: 'A',
       templateUrl: 'player.html',
+      scope: {
+        songs: '=playerPlaylist'
+      },
       link: function(scope) {
         // time show mode
         scope.showTimeLeft = false;
