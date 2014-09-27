@@ -107,8 +107,7 @@
       <div
         class="b-player-playlist-item-inner b-song"
         ng-bind-html="song.artist + ' - ' + song.title"></div>
-      <div class="b-player-playlist-item-inner b-duration">
-        {{song.duration | duration}}
+      <div class="b-player-playlist-item-inner b-duration" ng-bind="song.duration | duration">
       </div>
     </li>
   </ul>
