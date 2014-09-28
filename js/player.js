@@ -5,7 +5,7 @@
  * Item format:
  *  - artist: String
  *  - title: String
- *  - duration: Number (seconds)
+ *  - [duration]: Number (seconds)
  *  - url: String
  *
  * @example

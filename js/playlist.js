@@ -1,5 +1,18 @@
+/**
+ * @example
+ *   // Get url before play:
+ *   Playlist.beforePlay = function (song) {
+ *
+ *     // request some remote server for song url
+ *     VK.Api.call('audio.search', {q: song.title}, function (response) {
+ *       song.url = response[1].url;
+ *     });
+ *   };
+ */
 angular.module('Player.Playlist', ['Player.Audio', 'Player.Queue'])
-  .factory('Playlist', ['Audio', 'Queue', function (Audio, Queue) {
+  .factory('Playlist', ['$q', 'Audio', 'Queue',
+              function ( $q,   Audio,   Queue ) {
+
     var _playlists = {};
 
     // all songs array
@@ -133,12 +146,24 @@ angular.module('Player.Playlist', ['Player.Audio', 'Player.Queue'])
 
     // Play song
     function play(song) {
+
+      // @todo: is this really used
       if (typeof song === 'number') {
         song = _songsMap[song];
       }
 
-      factory.currentSong = song;
-      Audio.play( song.url );
+      if ( typeof factory.beforePlay === 'function' ) {
+
+        // wrap to promise if non-promise value is returned
+        $q.when( factory.beforePlay(song) )
+          .then(function () {
+            factory.currentSong = song;
+            Audio.play( song.url );
+          });
+      } else {
+        factory.currentSong = song;
+        Audio.play( song.url );
+      }
     }
 
     function playByPosition(position) {
