@@ -4,7 +4,7 @@
  */
 angular.module('Player.Audio', [])
   .factory('Audio', ['$timeout', function ($timeout) {
-    var player = document.createElement('audio'),
+    var player = new Audio(),
 
         props = {
           src:    null,
@@ -37,8 +37,6 @@ angular.module('Player.Audio', [])
           getProgress: getProgress,
           togglePause: togglePause
         };
-
-    angular.element('body').append(player);
 
     // set initial volume
     volume( props.volume ? Number(props.volume) : 100 );
