@@ -33,6 +33,21 @@ angular.module('Player', [
         // time show mode
         scope.showTimeLeft = false;
 
+        scope.showTimeElapsed = function (state) {
+
+          // do not show elapsed time for continuous playing streams
+          // like radiostations
+          if ( state ) {
+            if ( Audio.prop('duration') !== Infinity ) {
+              scope.showTimeLeft = true;
+            }
+
+            return;
+          }
+
+          scope.showTimeLeft = false;
+        };
+
         scope.$watchCollection(function () {
           return Playlist.current.songs;
         }, function (songs) {

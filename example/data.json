@@ -1,5 +1,10 @@
 [
   {
+    "url": "http://radio.mfm.ua:80/online128",
+    "artist": "MFM RadioStation",
+    "title": "Listen online"
+  },
+  {
     "url": "http://upload.wikimedia.org/wikipedia/en/5/5e/U2_One.ogg",
     "artist": "U2",
     "title": "One"

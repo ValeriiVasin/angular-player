@@ -31,6 +31,10 @@ angular.module('Player.Duration', [])
           return '00:00';
         }
 
+        if ( duration === -Infinity || duration === Infinity ) {
+          return '∞';
+        }
+
         var result = duration < 0 ? '-' : '';
         duration = Math.abs(duration);
         var minutes = Utils.pad(Math.floor(duration / 60));

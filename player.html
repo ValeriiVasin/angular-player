@@ -66,12 +66,12 @@
       >
       <div
         ng-bind="time | duration"
-        ng-click="showTimeLeft = true"
+        ng-click="showTimeElapsed(true)"
         class="b-player__controls__playback__time__elapsed"
         ></div>
       <div
         ng-bind="(time - duration) | duration"
-        ng-click="showTimeLeft = false"
+        ng-click="showTimeElapsed(false)"
         class="b-player__controls__playback__time__left"
         ></div>
     </div>
