@@ -10,7 +10,6 @@ angular.module('Player.Audio', [])
           src:    null,
           time:   0,
           volume: localStorage.getItem('volume'),
-          shuffle: false,
 
           // currently playing song duration
           duration: 0,
@@ -156,7 +155,7 @@ angular.module('Player.Audio', [])
         }
       });
 
-    // props getter
+    // props getter/setter
     function prop(name, value) {
       if ( !props.hasOwnProperty(name) ) {
         throw new Error('prop `'+ name +'` does not exist');
