@@ -184,7 +184,15 @@ angular.module('Player', [
 
         // controls
         this.controls = {};
-        this.controls.togglePause = Audio.togglePause;
+        this.controls.togglePause = function () {
+          // start playing current song if source
+          // has not been set before (initial state)
+          if ( !Audio.prop('src') ) {
+            that.playSong(that.currentSong);
+          } else {
+            Audio.togglePause();
+          }
+        };
 
         this.controls.toggleLoop = function () {
           Audio.prop('loop', !Audio.prop('loop'));
