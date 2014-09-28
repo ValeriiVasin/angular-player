@@ -4,8 +4,8 @@ angular.module('Player.Shortcuts', [
   'Player.Queue',
   'Player.Playlist'
 ])
-.directive('shortcuts', ['Audio', 'Navigation', 'Queue', 'Playlist',
-               function ( Audio,   Navigation,   Queue,   Playlist ) {
+.directive('playerShortcuts', ['Audio', 'Navigation', 'Queue', 'Playlist',
+                     function ( Audio,   Navigation,   Queue,   Playlist ) {
 
   // keyboard shortcuts
   return function link(scope) {
