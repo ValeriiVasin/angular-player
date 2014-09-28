@@ -3,7 +3,7 @@
  * http://www.w3schools.com/tags/ref_av_dom.asp
  */
 angular.module('Player.Audio', [])
-  .factory('Audio', ['$timeout', function ($timeout) {
+  .factory('Audio', ['$rootScope', function ($rootScope) {
     var player = new Audio(),
 
         props = {
@@ -118,19 +118,18 @@ angular.module('Player.Audio', [])
       // observe events
       .on({
         timeupdate: function () {
-          $timeout(function () {
-            props.time = floor(player.currentTime);
-          });
+          props.time = floor(player.currentTime);
+          $rootScope.$apply();
         },
 
         ended: function () {
-          $timeout(function () {
-            prop('ended', true);
-          });
+          prop('ended', true);
+          $rootScope.$apply();
         },
 
         durationchange: function () {
           prop('duration', player.duration);
+          $rootScope.$apply();
         },
 
         progress: function () {
@@ -142,12 +141,12 @@ angular.module('Player.Audio', [])
             return;
           }
 
-          $timeout(function () {
-            progress = {
-              start: buffered.start(last),
-              end: buffered.end(last)
-            };
-          });
+          progress = {
+            start: buffered.start(last),
+            end:   buffered.end(last)
+          };
+
+          $rootScope.$apply();
         }
       });
 
