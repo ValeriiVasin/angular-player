@@ -2,11 +2,11 @@
   <div class="b-player__controls__info">
     <div
       class="b-player__controls__info__artist"
-      ng-bind="currentSong.artist"
+      ng-bind="player.currentSong.artist"
       ></div>
     <div
       class="b-player__controls__info__title"
-      ng-bind="currentSong.title"
+      ng-bind="player.currentSong.title"
       ></div>
   </div>
 
@@ -14,7 +14,7 @@
     <div class="b-player__controls__navigation__prev">
       <div
         class="b-player__controls__navigation__prev-btn"
-        ng-click="controls.prev()"
+        ng-click="player.controls.prev()"
         ></div>
     </div>
 
@@ -22,13 +22,13 @@
       class="b-player__controls__navigation__play"
       >
       <div
-        ng-click="controls.toggle()"
-        ng-show="isPaused"
+        ng-click="player.controls.togglePause()"
+        ng-show="player.state.paused"
         class="b-player__controls__navigation__play__play"
         ></div>
       <div
-        ng-click="controls.toggle()"
-        ng-hide="isPaused"
+        ng-click="player.controls.togglePause()"
+        ng-hide="player.state.paused"
         class="b-player__controls__navigation__play__pause"
         ></div>
     </div>
@@ -36,7 +36,7 @@
     <div class="b-player__controls__navigation__next">
       <div
         class="b-player__controls__navigation__next-btn"
-        ng-click="controls.next()"
+        ng-click="player.controls.next()"
         ></div>
     </div>
   </div>
@@ -46,32 +46,32 @@
 
   <div class="b-player__controls__playback">
     <div
-      slider="time"
-      slider-update="update(progress)"
-      slider-max="duration"
-      slider-preload="downloadProgress"
+      slider="player.time"
+      slider-update="player.setTime(progress)"
+      slider-max="player.duration"
+      slider-preload="player.downloadProgress"
       class="slider b-player__controls__playback__progress"
       >
       <div
         class="b-player__controls__playback__progress__download"
-        ng-style="preload"
+        ng-style="player.downloadProgress"
         ></div>
     </div>
 
     <div
       ng-class="{
-        'b-player__controls__playback__time--left': showTimeLeft
+        'b-player__controls__playback__time--left': player.state.elapsed
       }"
       class="b-player__controls__playback__time"
       >
       <div
-        ng-bind="time | duration"
-        ng-click="showTimeElapsed(true)"
+        ng-bind="player.time | duration"
+        ng-click="player.showTimeElapsed(true)"
         class="b-player__controls__playback__time__elapsed"
         ></div>
       <div
-        ng-bind="(time - duration) | duration"
-        ng-click="showTimeElapsed(false)"
+        ng-bind="(player.time - player.duration) | duration"
+        ng-click="player.showTimeElapsed(false)"
         class="b-player__controls__playback__time__left"
         ></div>
     </div>
@@ -79,10 +79,10 @@
 
   <ul class="b-player__controls__buttons">
     <li
-      ng-click="toggleLoop()"
+      ng-click="player.controls.toggleLoop()"
       ng-class="{
-        'b-player__controls__buttons__loop--active': loop,
-        'b-player__controls__buttons__loop': !loop
+        'b-player__controls__buttons__loop--active': player.state.loop,
+        'b-player__controls__buttons__loop': !player.state.loop
       }"
       ></li>
   </ul>
@@ -90,7 +90,7 @@
   <div class="b-player__controls__volume">
     <div class="b-player__controls__volume__low"></div>
     <div
-      slider="volume"
+      slider="player.volume"
       class="b-player__controls__volume__progress slider"
       ></div>
     <div class="b-player__controls__volume__high"></div>
@@ -110,17 +110,17 @@
   <ul class="b-player-playlist">
     <li
       ng-class="{
-        'playing':  isCurrentSong(song),
-        'selected': isSelected($index),
-        'queued':   positionInsideQueue(song)
+        'playing':  player.isCurrentSong(song),
+        'selected': player.isSelected($index),
+        'queued':   player.positionInsideQueue(song)
       }"
-      ng-dblclick="playSong(song)"
-      ng-click="setSelected($index)"
-      ng-repeat="song in songs"
+      ng-dblclick="player.playSong(song)"
+      ng-click="player.setSelected($index)"
+      ng-repeat="song in player.songs"
       class="b-player-playlist-item"
       >
       <div class="b-player-playlist-item-inner b-state">
-        <span ng-bind="positionInsideQueue(song)"></span>
+        <span ng-bind="player.positionInsideQueue(song)"></span>
       </div>
       <div
         class="b-player-playlist-item-inner b-position"

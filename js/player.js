@@ -29,100 +29,104 @@ angular.module('Player', [
       restrict: 'A',
       templateUrl: 'player.html',
       scope: true,
-      link: function(scope) {
-        // time show mode
-        scope.showTimeLeft = false;
+      controllerAs: 'player',
+      controller: ['$scope', function ($scope) {
+        var that = this;
 
-        scope.showTimeElapsed = function (state) {
+        this.state = {
+
+          // show elapsed time
+          elapsed: false,
+
+          paused: Audio.prop('paused'),
+
+          loop: Audio.prop('loop')
+        };
+
+        this.showTimeElapsed = function (state) {
 
           // do not show elapsed time for continuous playing streams
           // like radiostations
           if ( state ) {
             if ( Audio.prop('duration') !== Infinity ) {
-              scope.showTimeLeft = true;
+              that.state.elapsed = true;
             }
 
             return;
           }
 
-          scope.showTimeLeft = false;
+          that.state.elapsed = false;
         };
 
-        scope.$watchCollection(function () {
-          return Playlist.current.songs;
-        }, function (songs) {
-          scope.songs = songs;
-        });
-
-        scope.$watch(function() {
-          return Playlist.currentSong;
-        }, function(current, prev) {
-          if (prev === current) {
-            return;
-          }
-
-          // save current song params
-          scope.currentSong = current;
-        });
-
         // update time from song progress slider
-        scope.update = function(time) {
+        that.setTime = function(time) {
           Audio.time(time);
         };
 
-        // watch volume changes
-        scope.volume = Audio.volume();
-        scope.$watch('volume', function(value, old) {
-          if (value === old) {
-            return;
-          }
-          Audio.volume(value);
+        // watch pause changes
+        $scope.$watch(function () {
+          return Audio.prop('paused');
+        }, function (value) {
+          that.state.paused = value;
+        });
+
+        // watch playlist change
+        $scope.$watchCollection(function () {
+          return Playlist.current.songs;
+        }, function (songs) {
+          that.songs = songs;
+        });
+
+        $scope.$watch(function() {
+          return Playlist.currentSong;
+        }, function(current) {
+          // save current song params
+          that.currentSong = current;
+        });
+
+        // watch loop changes
+        $scope.$watch(function () {
+          return Audio.prop('loop');
+        }, function (value) {
+          that.state.loop = value;
         });
 
         // watch and update current time
-        scope.time = 0;
-        scope.$watch(function () {
+        this.time = 0;
+        $scope.$watch(function () {
           return Audio.time();
         }, function (value) {
-          scope.time = value;
+          that.time = value;
+        });
+
+        // watch volume changes
+        this.volume = Audio.volume();
+        $scope.$watch(function () {
+          return that.volume;
+        }, function(value) {
+          Audio.volume(value);
         });
 
         // watch when ended
-        scope.$watch(function () {
+        $scope.$watch(function () {
           return Audio.prop('ended');
         }, function (value) {
           if (value) {
-            scope.controls.next();
+            that.controls.next();
             Audio.prop('ended', false);
           }
         });
 
-        scope.duration = 0;
-        scope.$watch(function () {
+        this.duration = 0;
+        $scope.$watch(function () {
           return Audio.prop('duration');
         }, function (duration) {
-          scope.duration = duration;
-        });
-
-        // watch pause changes
-        scope.isPaused = Audio.prop('paused');
-        scope.$watch(function () {
-          return Audio.prop('paused');
-        }, function (value) {
-          scope.isPaused = value;
-        });
-
-        // watch loop changes
-        scope.loop = Audio.prop('loop');
-        scope.$watch(function () {
-          return Audio.prop('loop');
-        }, function (value) {
-          scope.loop = value;
+          that.duration = duration;
         });
 
         // watch progress
-        scope.downloadProgress = { left: 0, width: 0 };
-        scope.$watch(function () {
+        this.downloadProgress = { left: 0, width: 0 };
+        $scope.$watch(function () {
           return Audio.getProgress();
         }, function (value, oldValue) {
           if (value === oldValue) {
@@ -130,30 +134,31 @@ angular.module('Player', [
           }
 
           // convert progress seconds to width
-          var end = Math.floor( (value.end / Audio.prop('duration')) * 100 );
+          var end = Math.floor(
+            (value.end / Audio.prop('duration')) * 100
+          );
 
-          scope.downloadProgress = {
-            left: 0,
-            width: end + '%'
-          };
+          that.downloadProgress.left = 0;
+          that.downloadProgress.width = end + '%';
         });
 
         // currently selected song
-        scope.selected = 0;
-        scope.$watch(function () {
+        that.selected = 0;
+        $scope.$watch(function () {
           return Navigation.index;
         }, function (value, old) {
           if (value === old) {
             return;
           }
-          scope.selected = value;
+
+          that.selected = value;
         });
 
-        scope.isSelected = function(index) {
-          return index === scope.selected;
+        this.isSelected = function(index) {
+          return this.selected === index;
         };
 
-        scope.setSelected = function(index) {
+        this.setSelected = function(index) {
           Navigation.set(index);
         };
 
@@ -162,31 +167,32 @@ angular.module('Player', [
          * @param  {Object}        index  Song
          * @return {Number|String}        Position in queue or empty string
          */
-        scope.positionInsideQueue = function (song) {
+        this.positionInsideQueue = function (song) {
           var position = Queue.position(song._index);
 
           return typeof position === 'number' ? position + 1 : '';
         };
 
-        scope.playSong = function(song) {
+        this.playSong = function(song) {
           Queue.prev(song._index);
           Playlist.play(song);
         };
 
-        scope.isCurrentSong = function(song) {
-          return scope.currentSong === song;
+        this.isCurrentSong = function(song) {
+          return this.currentSong === song;
         };
 
         // controls
-        scope.controls = {};
-        scope.controls.toggle = Audio.togglePause;
-        scope.toggleLoop = function () {
-          Audio.prop('loop', !scope.loop);
+        this.controls = {};
+        this.controls.togglePause = Audio.togglePause;
+
+        this.controls.toggleLoop = function () {
+          Audio.prop('loop', !Audio.prop('loop'));
         };
 
-        scope.controls.next = Playlist.next;
-        scope.controls.prev = Playlist.prev;
-      }
+        this.controls.next = Playlist.next;
+        this.controls.prev = Playlist.prev;
+      }]
     };
   }
 ]);

@@ -7,12 +7,7 @@ angular.module('Player.Slider', [])
         scope: {
           slider: '=',
           update: '&sliderUpdate',
-          max: '=sliderMax',
-
-          /**
-           * @todo Think how to remove downloading progress from slider
-           */
-          preload: '=sliderPreload'
+          max: '=sliderMax'
         },
         link: function(scope, element, attrs) {
           // prevent applying time changes while user sliding
