@@ -107,6 +107,12 @@ angular.module('Player.Audio', [])
         return props.time;
       }
 
+      // We could not change time if duration is Infinite
+      // Notice: it's for online streams
+      if ( prop('duration') === Infinity ) {
+        return;
+      }
+
       player.currentTime = props.time = value;
     }
 

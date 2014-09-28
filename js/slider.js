@@ -30,6 +30,7 @@ angular.module('Player.Slider', [])
               if (!directApply) {
                 return;
               }
+
               $timeout(function() {
                 scope.slider = ui.value;
               });
@@ -58,6 +59,15 @@ angular.module('Player.Slider', [])
           scope.$watch('max', function(current, prev) {
             if (current === prev) {
               return;
+            }
+
+            if ( current === Infinity ) {
+              element.slider('disable');
+            } else {
+              element.slider('enable');
+
+              // reset slider value to 0 after enabling
+              element.slider('option', 'value', 0);
             }
 
             element.slider('option', 'max', current);
