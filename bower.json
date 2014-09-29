@@ -1,0 +1,34 @@
+{
+  "name": "angular-player",
+  "version": "0.9.0",
+  "authors": [
+    "Valerii Vasin <valerii.vasin@gmail.com>"
+  ],
+  "description": "HTML5 audio player for AngularJS",
+  "keywords": [
+    "angular",
+    "audio",
+    "player",
+    "mp3",
+    "playlist",
+    "song"
+  ],
+  "license": "MIT",
+  "homepage": "http://valeriivasin.github.io/angular-player",
+  "main": [
+    "dist/player.js",
+    "dist/player.css"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.2.25",
+    "jquery-ui": "~1.11.1",
+    "jquery": "~2.1.1"
+  }
+}
