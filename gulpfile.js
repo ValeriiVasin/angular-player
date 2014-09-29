@@ -71,6 +71,8 @@ gulp.task('watch', function () {
   gulp.watch('core/*.js', ['core']);
   gulp.watch('simple-player/**', ['simple-player']);
 
-  gulp.watch(['build/**', 'example/**'])
+  gulp.watch(['build/**', 'examples/**'])
     .on('change', livereload.changed);
 });
+
+gulp.task('build', ['core', 'simple-player']);
