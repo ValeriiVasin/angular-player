@@ -9,10 +9,12 @@ var rename = require('gulp-rename');
 var merge = require('merge-stream');
 var gulpif = require('gulp-if');
 var cssBase64 = require('gulp-css-base64');
+var clean = require('gulp-clean');
 
 /**
  * Helper that saves 2 versions of files:
  * concatenated and minified
+ * Also it replaces images with base64-encoded data URI strings in css files
  */
 function twoVersions(stream, filename) {
   var type = /\.js$/.test(filename) ? 'js' : 'css';
@@ -76,3 +78,13 @@ gulp.task('watch', function () {
 });
 
 gulp.task('build', ['core', 'simple-player']);
+
+gulp.task('dist-clean', function () {
+  return gulp.src('dist/*', { read: false })
+    .pipe(clean());
+});
+
+gulp.task('dist', ['build', 'dist-clean'], function () {
+  gulp.src('build/*')
+    .pipe( gulp.dest('dist/') );
+});
