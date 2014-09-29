@@ -1,18 +1,18 @@
 {
-  "name": "player",
+  "name": "angular-player",
   "version": "0.0.1",
-  "description": "AngularJS player",
+  "description": "HTML5 player for AngularJS",
   "directories": {
     "example": "example"
   },
   "scripts": {},
   "keywords": [
     "angular",
+    "audio",
     "player",
     "mp3",
-    "song",
-    "artist",
-    "audio"
+    "playlist",
+    "song"
   ],
   "author": "Valerii Vasin",
   "license": "MIT",
