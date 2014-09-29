@@ -1,5 +1,4 @@
 .DS_Store
-example/mp3
 node_modules/
 build/
 bower_components/
