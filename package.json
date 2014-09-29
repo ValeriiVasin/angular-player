@@ -1,7 +1,7 @@
 {
   "name": "angular-player",
   "version": "0.9.0",
-  "description": "HTML5 player for AngularJS",
+  "description": "HTML5 audio player for AngularJS",
   "directories": {
     "example": "example"
   },
