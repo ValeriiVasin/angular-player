@@ -2,6 +2,10 @@
 Simple AngularJS audio player that could be used in your project.
 
 # Basic example
+```bash
+bower install angular-player
+```
+
 Layout `index.html`:
 ```html
 <!doctype html>
@@ -41,4 +45,13 @@ angular.module('Example', ['Player'])
       Playlist.add('default', response.data);
     });
   }]);
+```
+
+Track format example:
+```json
+{
+  "url": "http://upload.wikimedia.org/wikipedia/en/5/5e/U2_One.ogg",
+  "artist": "U2",
+  "title": "One"
+}
 ```
