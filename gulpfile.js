@@ -7,6 +7,8 @@ var minifyHtml = require("gulp-minify-html");
 var livereload = require('gulp-livereload');
 var rename = require('gulp-rename');
 var merge = require('merge-stream');
+var gulpif = require('gulp-if');
+var cssBase64 = require('gulp-css-base64');
 
 /**
  * Helper that saves 2 versions of files:
@@ -17,9 +19,15 @@ function twoVersions(stream, filename) {
 
   return stream
     .pipe(concat(filename))
+    .pipe(gulpif(type === 'css', cssBase64()))
     .pipe(gulp.dest('build/'))
-    .pipe(type === 'js' ? uglify() : csso())
-    .pipe(rename({ extname: type === 'js' ? '.min.js' : '.min.css' }))
+
+    .pipe(gulpif(type === 'js', uglify()))
+    .pipe(gulpif(type === 'css', csso()))
+
+    .pipe(gulpif(type === 'js', rename({ extname: '.min.js' })))
+    .pipe(gulpif(type === 'css', rename({ extname: '.min.css' })))
+
     .pipe(gulp.dest('build/'));
 }
 

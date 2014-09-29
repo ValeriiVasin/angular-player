@@ -19,7 +19,9 @@
   "devDependencies": {
     "gulp": "^3.8.8",
     "gulp-concat": "^2.4.1",
+    "gulp-css-base64": "^1.2.5",
     "gulp-csso": "^0.2.9",
+    "gulp-if": "^1.2.4",
     "gulp-livereload": "^2.1.1",
     "gulp-minify-html": "^0.1.5",
     "gulp-ng-html2js": "^0.1.8",
