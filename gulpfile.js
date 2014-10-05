@@ -37,7 +37,7 @@ gulp.task('core', function () {
   return twoVersions(gulp.src('core/*.js'), 'core.js');
 });
 
-gulp.task('simple-player', function () {
+function simplePlayerJS() {
   var html2js = gulp.src('simple-player/*.html')
     .pipe(minifyHtml({
         empty: true,
@@ -54,19 +54,54 @@ gulp.task('simple-player', function () {
   ]);
 
   // prepare two versions of js files
-  var js = twoVersions(merge(html2js, scripts), 'player.js');
+  return merge(html2js, scripts)
+    .pipe(concat('player.js'))
+    .pipe(gulp.dest('build/'));
+}
+
+gulp.task('simple-player-js', function () {
+  // minified version
+  return simplePlayerJS().pipe(uglify())
+    .pipe(rename({ extname: '.min.js' }))
+    .pipe(gulp.dest('build/'));
+});
+
+gulp.task('simple-player-js-full', function () {
+  var deps = gulp.src([
+    'bower_components/jquery-ui/ui/core.js',
+    'bower_components/jquery-ui/ui/widget.js',
+    'bower_components/jquery-ui/ui/mouse.js',
+    'bower_components/jquery-ui/ui/slider.js'
+  ]);
+
+  // full
+  return merge(simplePlayerJS(), deps)
+    .pipe(concat('player-full.js'))
+    .pipe(gulp.dest('build/'))
+
+    // full minified
+    .pipe(rename({ extname: '.min.js' }))
+    .pipe(uglify())
+    .pipe(gulp.dest('build/'));
+});
+
+gulp.task('simple-player-css', function () {
 
   // prepare two versions of css files
-  var css = twoVersions(
+  return twoVersions(
     gulp.src([
       'simple-player/css/reset.css',
       'simple-player/css/player.css'
     ]),
     'player.css'
   );
-
-  return merge(js, css);
 });
+
+gulp.task('simple-player', [
+  'simple-player-js',
+  'simple-player-js-full',
+  'simple-player-css'
+  ]);
 
 gulp.task('watch', function () {
   livereload.listen();
